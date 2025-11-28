@@ -1,24 +1,26 @@
-"use client"
+"use client";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet"
-import React from "react"
+} from "@/components/ui/sheet";
+import React from "react";
 
 interface ModalComponentProps {
-  children: React.ReactNode
-  title: string
-  open: boolean
-  setOpen: (value: boolean) => void
+  children: React.ReactNode;
+  title: string;
+  description?: string;
+  open: boolean;
+  setOpen: (value: boolean) => void;
 }
 
 export const ModalDrawer = ({
   children,
   open,
   title,
+  description,
   setOpen,
 }: ModalComponentProps) => {
   // * MODAL WRAPPER
@@ -29,7 +31,7 @@ export const ModalDrawer = ({
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
           <SheetDescription>
-            Fill out the form below to create a new template.
+            {description ?? "Fill out the form below to create a new template."}
           </SheetDescription>
         </SheetHeader>
         <div className="flex-1 flex items-center justify-center overflow-y-auto">
@@ -37,5 +39,5 @@ export const ModalDrawer = ({
         </div>
       </SheetContent>
     </Sheet>
-  )
-}
+  );
+};

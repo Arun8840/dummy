@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import z from "zod"
-import { createClientSchema, createOrganizationalUnitSchema } from "./schema"
-import { SubmitHandler, useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+import z from "zod";
+import { createClientSchema, createOrganizationalUnitSchema } from "./schema";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -11,33 +11,33 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { trpc } from "@/trpc/client"
-import { Spinner } from "@/components/ui/spinner"
-import { toast } from "sonner"
-import { Switch } from "@/components/ui/switch"
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { trpc } from "@/trpc/client";
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
 
-type CreateFormType = z.infer<typeof createOrganizationalUnitSchema>
+type CreateFormType = z.infer<typeof createOrganizationalUnitSchema>;
 
 type CreateClientOrganizationalUnitFormPropType = {
-  clientId: string
-}
+  clientId: string;
+};
 export const CreateClientOrganizationalUnitForm = ({
   clientId,
 }: CreateClientOrganizationalUnitFormPropType) => {
-  const createOu = trpc.clients.createOu.useMutation()
-  const utils = trpc.useUtils()
+  const createOu = trpc.organizationalUnits.createOu.useMutation();
+  const utils = trpc.useUtils();
   const { isLoading: isPlanLoading, data: plans } =
-    trpc.clients.getPublishedPlan.useQuery()
+    trpc.clients.getPublishedPlan.useQuery();
 
   const form = useForm<CreateFormType>({
     defaultValues: {
@@ -49,17 +49,17 @@ export const CreateClientOrganizationalUnitForm = ({
       thirdpartyId: "0",
     },
     resolver: zodResolver(createOrganizationalUnitSchema),
-  })
+  });
 
   if (isPlanLoading) {
     return (
       <div className="grid h-full place-items-center">
         <Spinner />
       </div>
-    )
+    );
   }
 
-  const planitems = plans?.data || []
+  const planitems = plans?.data || [];
 
   const onCreate: SubmitHandler<CreateFormType> = (data) => {
     createOu.mutate(
@@ -68,17 +68,17 @@ export const CreateClientOrganizationalUnitForm = ({
         onSuccess(data) {
           toast.success(data?.message, {
             position: "top-center",
-          })
-          utils.clients.getOu.invalidate()
+          });
+          utils.organizationalUnits.getOus.invalidate();
         },
         onError(error) {
           toast(error?.message, {
             position: "top-center",
-          })
+          });
         },
       }
-    )
-  }
+    );
+  };
   return (
     <Form {...form}>
       <form
@@ -184,5 +184,5 @@ export const CreateClientOrganizationalUnitForm = ({
         </Button>
       </form>
     </Form>
-  )
-}
+  );
+};
