@@ -1,12 +1,12 @@
-"use client"
-import React from "react"
-import { SidebarInset, SidebarProvider } from "../ui/sidebar"
-import { ToolSidebar } from "../tool-sidebar"
+"use client";
+import React from "react";
+import { SidebarInset, SidebarProvider } from "../ui/sidebar";
+import { ToolSidebar } from "../tool-sidebar";
 
 export default function DetailsLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <SidebarProvider defaultOpen={false}>
@@ -15,5 +15,5 @@ export default function DetailsLayout({
         <div className="flex flex-1 flex-col gap-4 p-2">{children}</div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpRight,
   BadgeCheckIcon,
@@ -8,33 +8,34 @@ import {
   MoreHorizontal,
   Plus,
   Trash,
-} from "lucide-react"
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
-import { DataTable } from "@/utils/ui/data-table/table-component"
+import { DataTable } from "@/utils/ui/data-table/table-component";
 
-import { getDate } from "@/utils/functions/helpers"
-import { Badge } from "@/components/ui/badge"
-import { ClientData } from "@/types/client-management/client-types"
-import { useGetModalState } from "@/hooks/use-modal-state"
-import { ModalDrawer } from "@/utils/ui/modal-drawer"
-import { CreateClientForm } from "./create-client-form"
-import Link from "next/link"
+import { getDate } from "@/utils/functions/helpers";
+import { Badge } from "@/components/ui/badge";
+import { ClientData } from "@/types/client-management/client-types";
+import { useGetModalState } from "@/hooks/use-modal-state";
+import { ModalDrawer } from "@/utils/ui/modal-drawer";
+import { CreateClientForm } from "./create-client-form";
+import Link from "next/link";
+import { encryptClient } from "@/utils/functions/encrypt/client-encryption";
 
 interface ClientTemplateDataProps {
-  data: ClientData[]
+  data: ClientData[];
 }
 
 // Correct columns for workflow templates (field names and accessorKeys)
-export const columns: ColumnDef<ClientData>[] = [
+const columns: ColumnDef<ClientData>[] = [
   {
     accessorKey: "name",
     header: "Name",
@@ -51,18 +52,15 @@ export const columns: ColumnDef<ClientData>[] = [
     accessorKey: "active",
     header: "Active",
     cell: ({ row }) => {
-      const isActive = row.getValue("active") as boolean
+      const isActive = row.getValue("active") as boolean;
       return isActive ? (
         <BadgeCheckIcon
-          className="mx-auto text-green-600 dark:text-green-400"
+          className="text-green-600 dark:text-green-400"
           size={16}
         />
       ) : (
-        <BadgeXIcon
-          className="mx-auto text-red-600 dark:text-red-400"
-          size={16}
-        />
-      )
+        <BadgeXIcon className=" text-red-600 dark:text-red-400" size={16} />
+      );
     },
   },
 
@@ -77,11 +75,11 @@ export const columns: ColumnDef<ClientData>[] = [
     accessorKey: "createdDate",
     header: () => <div className="text-left">Created On</div>,
     cell: ({ row }) => {
-      const value = row.getValue("createdDate")
+      const value = row.getValue("createdDate");
       // Format date if it's an ISO string/date
-      const dateString = getDate(value as any)
+      const dateString = getDate(value as any);
 
-      return <div className="text-left">{dateString}</div>
+      return <div className="text-left">{dateString}</div>;
     },
   },
   {
@@ -95,19 +93,19 @@ export const columns: ColumnDef<ClientData>[] = [
     accessorKey: "modifiedDate",
     header: () => <div className="text-left">Modified On</div>,
     cell: ({ row }) => {
-      const value = row.getValue("modifiedDate")
+      const value = row.getValue("modifiedDate");
       // Format date if it's an ISO string/date
-      const dateString = getDate(value as any)
+      const dateString = getDate(value as any);
 
-      return <div className="text-left">{dateString}</div>
+      return <div className="text-left">{dateString}</div>;
     },
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const value = row.getValue("status") as "Draft" | "Published"
-      const isPublished = value === "Published"
+      const value = row.getValue("status") as "Draft" | "Published";
+      const isPublished = value === "Published";
       return (
         <Badge
           data-published={isPublished}
@@ -117,7 +115,7 @@ export const columns: ColumnDef<ClientData>[] = [
           <BadgeCheckIcon />
           {value}
         </Badge>
-      )
+      );
     },
   },
   {
@@ -125,7 +123,9 @@ export const columns: ColumnDef<ClientData>[] = [
     enableHiding: false,
     header: () => <div className="text-left">Action</div>,
     cell: ({ row }) => {
-      const template = row.original
+      const template = row.original;
+      const encryptedId = encryptClient(template?.id);
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -136,7 +136,7 @@ export const columns: ColumnDef<ClientData>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/clients/${template?.id}`}>
+              <Link href={`/clients/${encryptedId}`}>
                 <ArrowUpRight /> {template?.name}
               </Link>
             </DropdownMenuItem>
@@ -147,15 +147,15 @@ export const columns: ColumnDef<ClientData>[] = [
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];
 
 export function ClientTableData({ data }: ClientTemplateDataProps) {
   const { open, isOpen, setIsOpen, close } = useGetModalState({
     value: "create-client",
-  })
+  });
 
   const createAction = () => {
     return (
@@ -168,8 +168,8 @@ export function ClientTableData({ data }: ClientTemplateDataProps) {
       >
         <Plus /> Create Client
       </Button>
-    )
-  }
+    );
+  };
   return (
     <div className="w-full">
       <ModalDrawer title="Create Client" open={isOpen} setOpen={setIsOpen}>
@@ -182,5 +182,5 @@ export function ClientTableData({ data }: ClientTemplateDataProps) {
         title={"Clients"}
       />
     </div>
-  )
+  );
 }

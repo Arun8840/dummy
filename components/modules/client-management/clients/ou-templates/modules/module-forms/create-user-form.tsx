@@ -1,7 +1,6 @@
 "use client";
 
 import z from "zod";
-import { createClientSchema } from "./schema";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -23,56 +22,44 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/trpc/client";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "sonner";
+import { createOuUserSchema } from "../../schemas";
+import { useGetRoles } from "@/hooks/use-get-roles";
+import { RoleData } from "@/types/client-management/client-types";
 
-type CreateFormType = z.infer<typeof createClientSchema>;
-
-export const CreateClientForm = () => {
+type CreateFormType = z.infer<typeof createOuUserSchema>;
+type CreateUserFormProps = {
+  publihsedRoles: {
+    loading: boolean;
+    data: RoleData[];
+  };
+};
+export const CreateUserForm = ({ publihsedRoles }: CreateUserFormProps) => {
   const create = trpc.clients.create.useMutation();
-  const { isLoading: isPlanLoading, data: plans } =
-    trpc.clients.getPlan.useQuery();
-
   const form = useForm<CreateFormType>({
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      clientId: 0,
-      planId: "",
-      planName: "",
+      firstName: "",
+      lastName: "",
+      password: "",
+      confirmPassword: "",
+      roleIds: [],
+      userGroupId: "",
+      username: "",
     },
-    resolver: zodResolver(createClientSchema),
+    resolver: zodResolver(createOuUserSchema),
   });
 
-  if (isPlanLoading) {
+  const onCreate: SubmitHandler<CreateFormType> = async (data) => {
+    console.log("data", data);
+  };
+
+  if (publihsedRoles?.loading) {
     return (
       <div className="grid h-full place-items-center">
         <Spinner />
       </div>
     );
   }
-
-  const planitems = plans?.data || [];
-
-  const onCreate: SubmitHandler<CreateFormType> = async (data) => {
-    create.mutate(
-      {
-        ...data,
-      },
-      {
-        onSuccess(data) {
-          toast.success(data?.message, {
-            position: "top-center",
-          });
-        },
-        onError(error) {
-          toast.error(error?.message, {
-            position: "top-center",
-          });
-        },
-      }
-    );
-  };
+  console.log("data", publihsedRoles?.data);
   return (
     <Form {...form}>
       <form
@@ -82,10 +69,10 @@ export const CreateClientForm = () => {
         <div className="flex flex-col gap-4 flex-1">
           <FormField
             control={form.control}
-            name="name"
+            name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>First Name</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -96,12 +83,12 @@ export const CreateClientForm = () => {
 
           <FormField
             control={form.control}
-            name="email"
+            name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Last Name</FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -110,79 +97,81 @@ export const CreateClientForm = () => {
 
           <FormField
             control={form.control}
-            name="phone"
+            name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone number</FormLabel>
+                <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
+          {/* User Group */}
           <FormField
             control={form.control}
-            name="clientId"
+            name="userGroupId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Client ID</FormLabel>
+                <FormLabel>User Group</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                  {/* Optionally replace Input with a Select if you have groups */}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Password */}
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Confirm Password */}
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <Input type="password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Roles (Multi-select, but for now use Textarea/comma separated) */}
+          <FormField
+            control={form.control}
+            name="roleIds"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>User Roles (Comma separated IDs)</FormLabel>
                 <FormControl>
                   <Input
-                    type="number"
                     {...field}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value === "" ? "" : Number(value));
-                    }}
-                    value={field.value === 0 ? "" : field.value}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value.split(",").map((item) => item.trim())
+                      )
+                    }
                   />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="planName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Plan name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* ✅ FIXED Select integrated with React Hook Form */}
-          <FormField
-            control={form.control}
-            name="planId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Plan</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a plan" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className="w-full">
-                    {planitems.length > 0 &&
-                      planitems.map((plan) => (
-                        <SelectItem key={plan.id} value={plan.id}>
-                          {plan.name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
                 <FormMessage />
               </FormItem>
             )}
