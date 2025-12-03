@@ -5,14 +5,18 @@ import { DashboardSidebar } from "../dashboard-sidebar";
 import DashboardNavHeader from "../modules/dashboard/dashboard-nav-header";
 import { trpc } from "@/trpc/client";
 import { Spinner } from "../ui/spinner";
-import { User } from "@/types/auth-types";
+import { LoginExperienceResponse, User } from "@/types/auth-types";
+import { useStore } from "@/lib/store";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { data, isLoading } = trpc.dashboard.loginExperience.useQuery();
+  const { data, isLoading, isSuccess } =
+    trpc.dashboard.loginExperience.useQuery();
+  const loginExp = data?.data as LoginExperienceResponse;
+  const setLoginData = useStore((state) => state?.setLoginExp);
 
   const { landingPageMenu, user } = data?.data || {};
   if (isLoading) {
@@ -21,6 +25,10 @@ export default function DashboardLayout({
         <Spinner />
       </div>
     );
+  }
+
+  if (isSuccess && loginExp) {
+    setLoginData?.(loginExp);
   }
   return (
     <SidebarProvider>

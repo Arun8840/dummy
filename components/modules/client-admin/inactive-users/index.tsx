@@ -1,7 +1,6 @@
 "use client";
 
 import { trpc } from "@/trpc/client";
-import { ModulePropsTypes } from "../ou-modules";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ColumnDef } from "@tanstack/react-table";
 import { OuUsers } from "@/types/client-management/ou-module-types";
@@ -12,14 +11,25 @@ import { Button } from "@/components/ui/button";
 import { Trash2Icon } from "lucide-react";
 import { Warning } from "@/utils/ui/warning";
 import { toast } from "sonner";
+import { useStore } from "@/lib/store";
+import { useConfirm } from "@/hooks/use-confirm";
 
-export const InactiveUsers = ({ ouId, clientId }: ModulePropsTypes) => {
+export const InactiveUserTemplates = () => {
+  const clientData = useStore((s) => s.loginExp);
+  const ouId = clientData?.user?.ouId ?? "";
+
   const { data, isLoading, isError } =
     trpc.organizationalUnits.getOuInactiveUsers.useQuery({
       ouId,
     });
   const utils = trpc.useUtils();
   const enable = trpc.organizationalUnits.enableUser.useMutation();
+  const remove = trpc.organizationalUnits.removeUser.useMutation();
+  const [DeleteModal, confirmDelete] = useConfirm(
+    "Remove user",
+    "This user will be removed from the organizational unit. Are you sure you want to proceed?",
+    "destructive"
+  );
 
   if (isLoading) {
     return <Skeleton className="w-full h-[100px]" />;
@@ -46,10 +56,9 @@ export const InactiveUsers = ({ ouId, clientId }: ModulePropsTypes) => {
             position: "top-center",
           });
           // Invalidate both the inactive and active OU user lists for this OU
-          await Promise.all([
-            utils.organizationalUnits.getOuInactiveUsers.invalidate({ ouId }),
-            utils.organizationalUnits.getOuUsers.invalidate({ ouId }),
-          ]);
+          await utils.organizationalUnits.getOuInactiveUsers.invalidate({
+            ouId,
+          });
         },
         onError(error) {
           toast.error(error.message, {
@@ -59,6 +68,31 @@ export const InactiveUsers = ({ ouId, clientId }: ModulePropsTypes) => {
       }
     );
   };
+
+  // ! remove user
+  const handleRemoveUser = async (email: string) => {
+    const confirm = await confirmDelete();
+    if (!confirm || remove.isPending) return;
+    remove.mutate(
+      { email },
+      {
+        onSuccess: async (data) => {
+          toast.success(data?.message, {
+            position: "top-center",
+          });
+          await utils.organizationalUnits.getOuInactiveUsers.invalidate({
+            ouId,
+          });
+        },
+        onError(error) {
+          toast.error(error?.message, {
+            position: "top-center",
+          });
+        },
+      }
+    );
+  };
+
   const columns: ColumnDef<OuUsers>[] = [
     {
       accessorKey: "profilePicture", // Assuming there is a field for user avatar/profile picture
@@ -119,18 +153,26 @@ export const InactiveUsers = ({ ouId, clientId }: ModulePropsTypes) => {
     },
     {
       header: "Action",
-      cell: ({ row }) => (
-        <div className="lowercase">
-          <Button size={"icon-sm"} variant={"ghost"}>
-            <Trash2Icon fill="currentColor" />
-          </Button>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const user = row?.original;
+        return (
+          <div className="lowercase">
+            <Button
+              onClick={() => handleRemoveUser(user?.username)}
+              size={"icon-sm"}
+              variant={"ghost"}
+            >
+              <Trash2Icon fill="currentColor" />
+            </Button>
+          </div>
+        );
+      },
     },
   ];
 
   return (
     <div>
+      <DeleteModal isPending={remove?.isPending} />
       <DataTable
         searchBy="username"
         columns={columns}
