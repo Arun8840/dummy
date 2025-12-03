@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { trpc } from "@/trpc/client"
-import { Skeleton } from "@/components/ui/skeleton"
-import { DataTable } from "@/utils/ui/data-table/table-component"
-import { ColumnDef } from "@tanstack/react-table"
-import { OrganizationalUnit } from "@/types/client-management/client-types"
-import { Badge } from "@/components/ui/badge"
+import { trpc } from "@/trpc/client";
+import { Skeleton } from "@/components/ui/skeleton";
+import { DataTable } from "@/utils/ui/data-table/table-component";
+import { ColumnDef } from "@tanstack/react-table";
+import { OrganizationalUnit } from "@/types/client-management/client-types";
+import { Badge } from "@/components/ui/badge";
 import {
   ArrowUpRight,
   BadgeCheckIcon,
@@ -13,55 +13,55 @@ import {
   MoreHorizontal,
   Plus,
   Trash,
-} from "lucide-react"
-import { Switch } from "@/components/ui/switch"
+} from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { useGetModalState } from "@/hooks/use-modal-state"
-import { ModalDrawer } from "@/utils/ui/modal-drawer"
-import { CreateClientOrganizationalUnitForm } from "./create-client-ou-form"
-import { useConfirm } from "@/hooks/use-confirm"
-import { toast } from "sonner"
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useGetModalState } from "@/hooks/use-modal-state";
+import { ModalDrawer } from "@/utils/ui/modal-drawer";
+import { CreateClientOrganizationalUnitForm } from "./create-client-ou-form";
+import { useConfirm } from "@/hooks/use-confirm";
+import { toast } from "sonner";
 import {
   decryptClient,
   encryptClient,
-} from "@/utils/functions/encrypt/client-encryption"
+} from "@/utils/functions/encrypt/client-encryption";
 
 interface ClientDetailsProps {
-  clientId: string
+  clientId: string;
 }
 
 export const ClientOuTable = ({
   clientId: clientTemplateId,
 }: ClientDetailsProps) => {
-  const decryptedClientId = decryptClient(clientTemplateId)
+  const decryptedClientId = decryptClient(clientTemplateId);
   const ou = trpc.organizationalUnits.getOus.useQuery({
     clientId: decryptedClientId,
-  })
+  });
   // * hook
-  const utils = trpc.useUtils()
+  const utils = trpc.useUtils();
 
-  const removeOu = trpc.organizationalUnits.removeOu.useMutation()
+  const removeOu = trpc.organizationalUnits.removeOu.useMutation();
   const { open, isOpen, setIsOpen } = useGetModalState({
     value: "create-client-ou",
-  })
+  });
   const [DeleteModal, confirmDelete] = useConfirm(
     "Remove organizational unit",
     "This organizational unit will be removed from the client. Are you sure you want to proceed?",
     "destructive"
-  )
+  );
   if (ou.isLoading) {
-    return <Skeleton className="w-full h-[100px]" />
+    return <Skeleton className="w-full h-[100px]" />;
   }
 
-  const data = ou?.data?.data || []
+  const data = ou?.data?.data || [];
 
   const createOrganizationalUnit = () => {
     return (
@@ -73,13 +73,13 @@ export const ClientOuTable = ({
       >
         <Plus /> Organizational Unit
       </Button>
-    )
-  }
+    );
+  };
 
   // ! remove organizational unit
   const removeOrganizationalUnit = async (ouId: string) => {
-    const confirm = await confirmDelete()
-    if (!confirm || removeOu.isPending) return
+    const confirm = await confirmDelete();
+    if (!confirm || removeOu.isPending) return;
     removeOu.mutateAsync(
       {
         ouId: ouId,
@@ -88,22 +88,22 @@ export const ClientOuTable = ({
         onSuccess: async (data) => {
           toast.success(data.message, {
             position: "top-center",
-          })
+          });
           await utils.organizationalUnits.getOus.invalidate({
             clientId: clientTemplateId,
-          })
+          });
         },
         onError(error) {
           toast.error(error.message, {
             position: "top-center",
-          })
+          });
         },
       }
-    )
-  }
+    );
+  };
 
   // ! make default organizational unit
-  const setDefaultOrganizationalUnit = async (value: boolean) => {}
+  const setDefaultOrganizationalUnit = async (value: boolean) => {};
 
   const columns: ColumnDef<OrganizationalUnit>[] = [
     // TODO: "Logo" column placeholder: replace with logo when available.
@@ -139,7 +139,7 @@ export const ClientOuTable = ({
       accessorKey: "active",
       header: "Active",
       cell: ({ row }) => {
-        const isActive = row.getValue("active") as boolean
+        const isActive = row.getValue("active") as boolean;
         return isActive ? (
           <BadgeCheckIcon
             className="text-green-600 dark:text-green-400"
@@ -147,15 +147,15 @@ export const ClientOuTable = ({
           />
         ) : (
           <BadgeXIcon className="text-red-600 dark:text-red-400" size={16} />
-        )
+        );
       },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const value = row.getValue("status") as string
-        const isPublished = value === "Published"
+        const value = row.getValue("status") as string;
+        const isPublished = value === "Published";
         return (
           <Badge
             data-published={isPublished}
@@ -165,28 +165,28 @@ export const ClientOuTable = ({
             <BadgeCheckIcon size={14} className="mr-1" />
             {value}
           </Badge>
-        )
+        );
       },
     },
     {
       accessorKey: "defaultBu",
       header: "Set Default OU",
       cell: ({ row }) => {
-        const isDefaultOu = row.getValue("defaultBu") as boolean
+        const isDefaultOu = row.getValue("defaultBu") as boolean;
 
         return (
           <Switch
             defaultChecked={isDefaultOu}
             onCheckedChange={(checked) => setDefaultOrganizationalUnit(checked)}
           />
-        )
+        );
       },
     },
     {
       header: "Action",
       cell: ({ row }) => {
-        const ou = row.original
-        const encryptedId = encryptClient(ou?.id)
+        const ou = row.original;
+        const encryptedId = encryptClient(ou?.id);
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -211,10 +211,10 @@ export const ClientOuTable = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )
+        );
       },
     },
-  ]
+  ];
   return (
     <div className="w-full">
       <ModalDrawer
@@ -233,5 +233,5 @@ export const ClientOuTable = ({
         title={"OrganizationalUnit"}
       />
     </div>
-  )
-}
+  );
+};

@@ -6,6 +6,7 @@ import { surveyRouter } from "@/components/modules/survey-management/survey/proc
 import { authRouter } from "@/components/auth-forms/procedure";
 import { clientRouter } from "@/components/modules/client-management/clients/procedure";
 import { ouRouter } from "@/components/modules/client-management/clients/ou-templates/procedure";
+import { clientAdminRouters } from "./clientAdmin-router";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   survey: surveyRouter,
   clients: clientRouter,
   organizationalUnits: ouRouter,
+  clientAdmin: clientAdminRouters,
 });
 
 // export type definition of API

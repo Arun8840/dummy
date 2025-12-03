@@ -1,49 +1,47 @@
 "use client";
 
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { Switch } from "@/components/ui/switch";
+import { useStore } from "@/lib/store";
 import { trpc } from "@/trpc/client";
-import { ModulePropsTypes } from "../ou-modules";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ColumnDef } from "@tanstack/react-table";
 import { OuUsers } from "@/types/client-management/ou-module-types";
 import { DataTable } from "@/utils/ui/data-table/table-component";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { Pen, Plus } from "lucide-react";
-import { Warning } from "@/utils/ui/warning";
 import { ModalDrawer } from "@/utils/ui/modal-drawer";
-import { CreateUserForm } from "./module-forms/create-user-form";
+import { ColumnDef } from "@tanstack/react-table";
+import { Pen, Plus } from "lucide-react";
+import { CreateUserForm } from "../module-forms/create-user-form";
 import { useGetModalState } from "@/hooks/use-modal-state";
 import { useGetRoles } from "@/hooks/use-get-roles";
 import { toast } from "sonner";
 
-export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
+export default function UserTemplates() {
+  const clientData = useStore((s) => s.loginExp);
+  const clientId = clientData?.user?.clientId ?? "";
+  const ouId = clientData?.user?.ouId ?? "";
+
   // * hook
+  const utils = trpc.useUtils();
   const { open, isOpen, setIsOpen, close } = useGetModalState({
-    value: "create-ou-user",
+    value: "create-client-user",
   });
   const { data: publihsedRole, isLoading: isRoleLoading } = useGetRoles();
-  const utils = trpc.useUtils();
-  const { data, isLoading, isError } =
-    trpc.organizationalUnits.getOuUsers.useQuery({
-      ouId,
-    });
+  const { isLoading, data } = trpc.clientAdmin.users.getAllUsers.useQuery({
+    clientId: clientId,
+  });
   const disable = trpc.organizationalUnits.disableUser.useMutation();
 
-  if (isLoading) {
-    return <Skeleton className="w-full h-[100px]" />;
-  }
+  const userItems = data?.data || [];
 
-  if (isError) {
+  if (isLoading) {
     return (
-      <Warning
-        title="Error loading users"
-        description="There was a problem loading users for this organizational unit. Please try again later."
-        variant="destructive"
-      />
+      <div className="size-full grid place-items-center">
+        <Spinner />
+      </div>
     );
   }
-  const users = data?.data || [];
+
   // ! disable user
   const handle_disableUser = (email: string) => {
     disable.mutate(
@@ -53,10 +51,8 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
           toast.success(data.message, {
             position: "top-center",
           });
-          await Promise.all([
-            utils.organizationalUnits.getOuInactiveUsers.invalidate({ ouId }),
-            utils.organizationalUnits.getOuUsers.invalidate({ ouId }),
-          ]);
+
+          await utils.clientAdmin.users.getAllUsers.invalidate({ clientId });
         },
         onError(error) {
           toast.error(error.message, {
@@ -66,6 +62,7 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
       }
     );
   };
+
   const columns: ColumnDef<OuUsers>[] = [
     {
       accessorKey: "profilePicture", // Assuming there is a field for user avatar/profile picture
@@ -137,46 +134,45 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
     },
   ];
 
+  // * create user
   const createUser = () => {
     return (
       <Button
         title="Create Client"
         type="button"
-        onClick={open}
         size={"sm"}
         variant="gradient"
         className="w-full sm:w-auto"
+        onClick={open}
       >
         <Plus /> Create User
       </Button>
     );
   };
-
   return (
     <div>
       <ModalDrawer
-        title="Create Organizational Unit User"
-        description="Fill out the form below to create a new user for this Organizational Unit."
+        title="Create User"
+        description="Fill out the form below to create a new user."
         open={isOpen}
         setOpen={setIsOpen}
       >
         <CreateUserForm
           clientId={clientId!}
-          ouId={ouId}
           publihsedRoles={{
             loading: isRoleLoading,
             data: publihsedRole,
           }}
+          ouId={ouId}
         />
       </ModalDrawer>
-
       <DataTable
         searchBy="username"
         columns={columns}
-        data={users || []}
+        data={userItems}
         title={"Users"}
         createAction={createUser}
       />
     </div>
   );
-};
+}
