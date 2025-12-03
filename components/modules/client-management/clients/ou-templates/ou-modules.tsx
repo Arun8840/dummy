@@ -1,26 +1,29 @@
-"use client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { InactiveUsers, Roles, UserGroups, Users } from "./modules";
-import { Asterisk, UserRound, Users2, UserX } from "lucide-react";
-import { useParams } from "next/navigation";
-import { decryptClient } from "@/utils/functions/encrypt/client-encryption";
+"use client"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { InactiveUsers, Roles, UserGroups, Users } from "./modules"
+import { Asterisk, UserRound, Users2, UserX } from "lucide-react"
+import { useParams } from "next/navigation"
+import { decryptClient } from "@/utils/functions/encrypt/client-encryption"
 
 type ParamType = {
-  clientId: string;
-  ouId: string;
-};
+  clientId: string
+  ouId: string
+}
 export type ModulePropsTypes = {
-  ouId: string;
-};
+  ouId: string
+  clientId?: string
+}
 export const OuModules = () => {
-  const params: ParamType = useParams();
+  const params: ParamType = useParams()
 
-  const encodedOuId = params?.ouId;
-  const decryptedOuId = decryptClient(encodedOuId);
+  const encodedOuId = params?.ouId
+  const encodedClientId = params?.clientId
+  const decryptedOuId = decryptClient(encodedOuId)
+  const decryptedClientId = decryptClient(encodedClientId)
   return (
     <div>
       <Tabs defaultValue="users">
-        <TabsList className="space-x-3">
+        <TabsList className="space-x-3 w-full sm:w-fit">
           <TabsTrigger value="users">
             <UserRound />
             Users
@@ -39,7 +42,7 @@ export const OuModules = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="users">
-          <Users ouId={decryptedOuId} />
+          <Users ouId={decryptedOuId} clientId={decryptedClientId} />
         </TabsContent>
         <TabsContent value="inactive-users">
           <InactiveUsers ouId={decryptedOuId} />
@@ -52,5 +55,5 @@ export const OuModules = () => {
         </TabsContent>
       </Tabs>
     </div>
-  );
-};
+  )
+}

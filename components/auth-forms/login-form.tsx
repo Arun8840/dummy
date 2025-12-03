@@ -72,6 +72,10 @@ export function LoginForm({
         })
         return
       }
+
+      toast.success(`Login successful: ${res.message}`, {
+        position: "top-center",
+      })
       navigation?.push("/")
     } catch (error: any) {
       toast.error(error?.message || "An error occurred during login.")
