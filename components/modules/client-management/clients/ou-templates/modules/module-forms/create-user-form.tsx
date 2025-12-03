@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import z from "zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod"
+import { SubmitHandler, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -10,56 +10,86 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { trpc } from "@/trpc/client";
-import { Spinner } from "@/components/ui/spinner";
-import { createOuUserSchema } from "../../schemas";
-import { useGetRoles } from "@/hooks/use-get-roles";
-import { RoleData } from "@/types/client-management/client-types";
+} from "@/components/ui/form"
 
-type CreateFormType = z.infer<typeof createOuUserSchema>;
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { trpc } from "@/trpc/client"
+import { Spinner } from "@/components/ui/spinner"
+import { createOuUserSchema } from "../../schemas"
+import { RoleData } from "@/types/client-management/client-types"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Check, ChevronDown } from "lucide-react"
+import { toast } from "sonner"
+
+type CreateFormType = z.infer<typeof createOuUserSchema>
 type CreateUserFormProps = {
   publihsedRoles: {
-    loading: boolean;
-    data: RoleData[];
-  };
-};
-export const CreateUserForm = ({ publihsedRoles }: CreateUserFormProps) => {
-  const create = trpc.clients.create.useMutation();
+    loading: boolean
+    data: RoleData[]
+  }
+  clientId: string
+  ouId: string
+}
+export const CreateUserForm = ({
+  publihsedRoles,
+  clientId,
+  ouId,
+}: CreateUserFormProps) => {
+  const create = trpc.organizationalUnits.createOuUsers.useMutation()
+  const utils = trpc.useUtils()
   const form = useForm<CreateFormType>({
     defaultValues: {
+      clientId: clientId,
+      ouId: ouId,
       firstName: "",
       lastName: "",
       password: "",
-      confirmPassword: "",
       roleIds: [],
-      userGroupId: "",
       username: "",
+      userGroupId: "",
     },
     resolver: zodResolver(createOuUserSchema),
-  });
+  })
 
   const onCreate: SubmitHandler<CreateFormType> = async (data) => {
-    console.log("data", data);
-  };
+    const requestData = {
+      ...data,
+      filterIds: [],
+      defaultLanguage: "en-us",
+      currentLanguage: "en-us",
+      provider: "local",
+      userType: "ClientUser",
+    }
+    create.mutate(requestData, {
+      onSuccess(data) {
+        toast.success(data?.message, {
+          position: "top-center",
+        })
+        utils.organizationalUnits.getOuUsers.invalidate()
+      },
+      onError(error) {
+        toast.error(error.message, {
+          position: "top-center",
+        })
+      },
+    })
+  }
 
   if (publihsedRoles?.loading) {
     return (
       <div className="grid h-full place-items-center">
         <Spinner />
       </div>
-    );
+    )
   }
-  console.log("data", publihsedRoles?.data);
   return (
     <Form {...form}>
       <form
@@ -102,23 +132,7 @@ export const CreateUserForm = ({ publihsedRoles }: CreateUserFormProps) => {
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* User Group */}
-          <FormField
-            control={form.control}
-            name="userGroupId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>User Group</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                  {/* Optionally replace Input with a Select if you have groups */}
+                  <Input {...field} placeholder="example@gmail.com" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -139,43 +153,78 @@ export const CreateUserForm = ({ publihsedRoles }: CreateUserFormProps) => {
               </FormItem>
             )}
           />
-
-          {/* Confirm Password */}
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <Input type="password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           {/* Roles (Multi-select, but for now use Textarea/comma separated) */}
           <FormField
             control={form.control}
             name="roleIds"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>User Roles (Comma separated IDs)</FormLabel>
+                <FormLabel>Add User Roles</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value.split(",").map((item) => item.trim())
-                      )
-                    }
-                  />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="justify-between">
+                        Select
+                        <ChevronDown />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-[220px]">
+                      <DropdownMenuLabel>Published Roles</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {publihsedRoles?.data?.length === 0 && (
+                        <DropdownMenuItem disabled>
+                          No roles available.
+                        </DropdownMenuItem>
+                      )}
+                      {publihsedRoles?.data?.map((role) => {
+                        const checked = field.value?.includes(role.id)
+                        return (
+                          <DropdownMenuItem
+                            key={role.id}
+                            className="flex items-center gap-2"
+                            onSelect={(e) => {
+                              e.preventDefault()
+                              if (checked) {
+                                field.onChange(
+                                  field.value.filter(
+                                    (id: string) => id !== role.id
+                                  )
+                                )
+                              } else {
+                                field.onChange([
+                                  ...(field.value || []),
+                                  role.id,
+                                ])
+                              }
+                            }}
+                          >
+                            {checked && <Check color="green" />}
+                            {role.name}
+                          </DropdownMenuItem>
+                        )
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          {/* User Group */}
+          {/* <FormField
+            control={form.control}
+            name="userGroupId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>User Group</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
         </div>
 
         <Button type="submit" disabled={create.isPending}>
@@ -183,5 +232,5 @@ export const CreateUserForm = ({ publihsedRoles }: CreateUserFormProps) => {
         </Button>
       </form>
     </Form>
-  );
-};
+  )
+}

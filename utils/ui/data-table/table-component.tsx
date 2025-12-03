@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import React from "react";
+import React from "react"
 import {
   ColumnFiltersState,
   flexRender,
@@ -11,8 +11,8 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
-} from "@tanstack/react-table";
-import { DataTableProps } from "./table-types";
+} from "@tanstack/react-table"
+import { DataTableProps } from "./table-types"
 import {
   Table,
   TableHeader,
@@ -20,16 +20,16 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown, Sparkle, Sparkles } from "lucide-react";
+} from "@/components/ui/dropdown-menu"
+import { ChevronDown, Sparkle, Sparkles } from "lucide-react"
 
 export function DataTable<TData, TValue>({
   columns,
@@ -38,13 +38,13 @@ export function DataTable<TData, TValue>({
   createAction: ActionElement,
   searchBy = "name",
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  );
+  )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+    React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
     data,
@@ -63,14 +63,14 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
     },
-  });
+  })
 
   return (
     <div className="w-full flex flex-col gap-2">
-      <div className="flex justify-end items-center gap-2 px-1">
-        <div className="flex-1">
+      <div className="flex justify-end items-center gap-2 px-1 flex-col sm:flex-row">
+        <div className="flex-1 hidden lg:block">
           {title && (
-            <Button disabled variant={"ghost"} className="px-1">
+            <Button disabled variant={"ghost"} className="px-1 ">
               <Sparkles className="dark:fill-yellow-300 dark:stroke-yellow-300" />
               {title}
             </Button>
@@ -85,7 +85,7 @@ export function DataTable<TData, TValue>({
           className="max-w-lg"
         />
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild className="w-full sm:w-auto">
             <Button variant="outline">
               Filter Columns <ChevronDown />
             </Button>
@@ -106,15 +106,11 @@ export function DataTable<TData, TValue>({
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                );
+                )
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        {ActionElement && (
-          <div>
-            <ActionElement />
-          </div>
-        )}
+        {ActionElement && <ActionElement />}
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>
@@ -189,5 +185,5 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </div>
-  );
+  )
 }

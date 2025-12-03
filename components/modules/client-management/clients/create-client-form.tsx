@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import z from "zod";
-import { createClientSchema } from "./schema";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod"
+import { createClientSchema } from "./schema"
+import { SubmitHandler, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -11,26 +11,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/form"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { trpc } from "@/trpc/client";
-import { Spinner } from "@/components/ui/spinner";
-import { toast } from "sonner";
+} from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { trpc } from "@/trpc/client"
+import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
 
-type CreateFormType = z.infer<typeof createClientSchema>;
+type CreateFormType = z.infer<typeof createClientSchema>
 
 export const CreateClientForm = () => {
-  const create = trpc.clients.create.useMutation();
+  const create = trpc.clients.create.useMutation()
   const { isLoading: isPlanLoading, data: plans } =
-    trpc.clients.getPlan.useQuery();
+    trpc.clients.getPlan.useQuery()
 
   const form = useForm<CreateFormType>({
     defaultValues: {
@@ -42,17 +42,17 @@ export const CreateClientForm = () => {
       planName: "",
     },
     resolver: zodResolver(createClientSchema),
-  });
+  })
 
   if (isPlanLoading) {
     return (
       <div className="grid h-full place-items-center">
         <Spinner />
       </div>
-    );
+    )
   }
 
-  const planitems = plans?.data || [];
+  const planitems = plans?.data || []
 
   const onCreate: SubmitHandler<CreateFormType> = async (data) => {
     create.mutate(
@@ -63,16 +63,16 @@ export const CreateClientForm = () => {
         onSuccess(data) {
           toast.success(data?.message, {
             position: "top-center",
-          });
+          })
         },
         onError(error) {
           toast.error(error?.message, {
             position: "top-center",
-          });
+          })
         },
       }
-    );
-  };
+    )
+  }
   return (
     <Form {...form}>
       <form
@@ -133,8 +133,8 @@ export const CreateClientForm = () => {
                     type="number"
                     {...field}
                     onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value === "" ? "" : Number(value));
+                      const value = e.target.value
+                      field.onChange(value === "" ? "" : Number(value))
                     }}
                     value={field.value === 0 ? "" : field.value}
                   />
@@ -194,5 +194,5 @@ export const CreateClientForm = () => {
         </Button>
       </form>
     </Form>
-  );
-};
+  )
+}
