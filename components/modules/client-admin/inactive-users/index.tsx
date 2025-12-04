@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Trash2Icon } from "lucide-react";
 import { Warning } from "@/utils/ui/warning";
 import { toast } from "sonner";
-import { useStore } from "@/lib/store";
+import { useStore } from "@/lib/stores";
 import { useConfirm } from "@/hooks/use-confirm";
+import { Spinner } from "@/components/ui/spinner";
 
 export const InactiveUserTemplates = () => {
   const clientData = useStore((s) => s.loginExp);
@@ -32,7 +33,11 @@ export const InactiveUserTemplates = () => {
   );
 
   if (isLoading) {
-    return <Skeleton className="w-full h-[100px]" />;
+    return (
+      <div className="size-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
   }
 
   if (isError) {

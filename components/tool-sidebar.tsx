@@ -1,30 +1,35 @@
-"use client"
-import * as React from "react"
+"use client";
+import * as React from "react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
-import { toolMenu } from "@/utils/functions/tool-menu-data"
-import { usePathname, useRouter } from "next/navigation"
-import Link from "next/link"
+} from "@/components/ui/sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { toolMenu } from "@/utils/functions/tool-menu-data";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import UserInfo from "./modules/dashboard/user-info";
+import { DarkModeSwitcher } from "@/utils/ui/dark-mode-switcher";
+import SignOutButton from "./sign-out-button";
+import { LogOut } from "lucide-react";
 
 interface ExtraProps {}
 
-type ToolSidebarProps = React.ComponentProps<typeof Sidebar> & ExtraProps
+type ToolSidebarProps = React.ComponentProps<typeof Sidebar> & ExtraProps;
 
 export function ToolSidebar({ ...props }: ToolSidebarProps) {
-  const navigation = useRouter()
-  const currentPath = usePathname()
+  const navigation = useRouter();
+  const currentPath = usePathname();
 
-  const menuItems = toolMenu(currentPath)
+  const menuItems = toolMenu(currentPath);
 
   return (
     <Sidebar {...props} collapsible="icon">
@@ -34,7 +39,7 @@ export function ToolSidebar({ ...props }: ToolSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems?.map((item) => {
-                const fullLink = `${currentPath}${item?.url}`
+                const fullLink = `${currentPath}${item?.url}`;
                 return (
                   <SidebarMenuItem key={item.title}>
                     <Tooltip>
@@ -49,7 +54,7 @@ export function ToolSidebar({ ...props }: ToolSidebarProps) {
                         ) : (
                           <SidebarMenuButton
                             onClick={() => {
-                              navigation.back()
+                              navigation.back();
                             }}
                           >
                             <item.icon />
@@ -62,12 +67,26 @@ export function ToolSidebar({ ...props }: ToolSidebarProps) {
                       </TooltipContent>
                     </Tooltip>
                   </SidebarMenuItem>
-                )
+                );
               })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DarkModeSwitcher className="size-8 mx-auto rounded" />
+          </SidebarMenuItem>
+        </SidebarMenu>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SignOutButton>
+              <LogOut />
+            </SignOutButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

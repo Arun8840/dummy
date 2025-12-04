@@ -9,13 +9,14 @@ import { DataTable } from "@/utils/ui/data-table/table-component";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Pen, Plus } from "lucide-react";
+import { BadgeCheck, Pen, Plus } from "lucide-react";
 import { Warning } from "@/utils/ui/warning";
 import { ModalDrawer } from "@/utils/ui/modal-drawer";
 import { CreateUserForm } from "./module-forms/create-user-form";
 import { useGetModalState } from "@/hooks/use-modal-state";
 import { useGetRoles } from "@/hooks/use-get-roles";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
   // * hook
@@ -74,10 +75,8 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
         const firstName = row.getValue("firstName") as string;
         const fallBackName = firstName.charAt(0).toUpperCase();
         return (
-          <Avatar className="bg-primary">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {fallBackName}
-            </AvatarFallback>
+          <Avatar>
+            <AvatarFallback>{fallBackName}</AvatarFallback>
           </Avatar>
         );
       },
@@ -122,7 +121,23 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
       header: "Role",
       cell: ({ row }) => {
         const roleIds = row.getValue("roleIds") as string[];
-        return <div>roles</div>;
+        const userRoles = publihsedRole?.filter((role) =>
+          roleIds?.includes(role?.id)
+        );
+        return (
+          <div className="flex flex-wrap gap-1 max-w-sm">
+            {userRoles?.map((ur) => {
+              return (
+                <Badge
+                  key={ur?.id}
+                  className="bg-blue-500 text-white dark:bg-blue-600"
+                >
+                  <BadgeCheck /> {ur?.name}
+                </Badge>
+              );
+            })}
+          </div>
+        );
       },
     },
     {
@@ -136,7 +151,6 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
       ),
     },
   ];
-
   const createUser = () => {
     return (
       <Button

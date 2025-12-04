@@ -6,7 +6,7 @@ import DashboardNavHeader from "../modules/dashboard/dashboard-nav-header";
 import { trpc } from "@/trpc/client";
 import { Spinner } from "../ui/spinner";
 import { LoginExperienceResponse, User } from "@/types/auth-types";
-import { useStore } from "@/lib/store";
+import { useStore } from "@/lib/stores";
 
 export default function DashboardLayout({
   children,

@@ -7,6 +7,7 @@ import { authRouter } from "@/components/auth-forms/procedure";
 import { clientRouter } from "@/components/modules/client-management/clients/procedure";
 import { ouRouter } from "@/components/modules/client-management/clients/ou-templates/procedure";
 import { clientAdminRouters } from "./clientAdmin-router";
+import { clientPlanRouter } from "@/components/modules/client-management/client-plan/procedure";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   table: tableRouter,
   survey: surveyRouter,
   clients: clientRouter,
+  clientPlans: clientPlanRouter,
   organizationalUnits: ouRouter,
   clientAdmin: clientAdminRouters,
 });
