@@ -22,8 +22,6 @@ export const OuModules = () => {
   const decryptedClientId = decryptClient(encodedClientId);
   return (
     <div>
-      {decryptedOuId}----
-      {decryptedClientId}
       <Tabs defaultValue="users">
         <TabsList className="space-x-3 w-full sm:w-fit">
           <TabsTrigger value="users">

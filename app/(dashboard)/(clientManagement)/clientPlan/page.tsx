@@ -1,5 +1,5 @@
-import React from "react"
+import ClientPlanTemplate from "@/components/modules/client-management/client-plan";
 
 export default function page() {
-  return <div>page</div>
+  return <ClientPlanTemplate />;
 }

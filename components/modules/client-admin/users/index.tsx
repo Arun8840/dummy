@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
-import { useStore } from "@/lib/store";
+import { useStore } from "@/lib/stores";
 import { trpc } from "@/trpc/client";
 import { OuUsers } from "@/types/client-management/ou-module-types";
 import { DataTable } from "@/utils/ui/data-table/table-component";
@@ -71,10 +71,8 @@ export default function UserTemplates() {
         const firstName = row.getValue("firstName") as string;
         const fallBackName = firstName.charAt(0).toUpperCase();
         return (
-          <Avatar className="bg-primary">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {fallBackName}
-            </AvatarFallback>
+          <Avatar>
+            <AvatarFallback>{fallBackName}</AvatarFallback>
           </Avatar>
         );
       },
@@ -119,7 +117,7 @@ export default function UserTemplates() {
       header: "Role",
       cell: ({ row }) => {
         const roleIds = row.getValue("roleIds") as string[];
-        return <div>roles</div>;
+        return <div>role</div>;
       },
     },
     {

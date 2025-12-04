@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2Icon } from "lucide-react";
 import { Warning } from "@/utils/ui/warning";
 import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const InactiveUsers = ({ ouId, clientId }: ModulePropsTypes) => {
   const { data, isLoading, isError } =
@@ -20,6 +21,12 @@ export const InactiveUsers = ({ ouId, clientId }: ModulePropsTypes) => {
     });
   const utils = trpc.useUtils();
   const enable = trpc.organizationalUnits.enableUser.useMutation();
+  const remove = trpc.organizationalUnits.removeUser.useMutation();
+  const [DeleteModal, confirmDelete] = useConfirm(
+    "Remove user",
+    "This user will be removed from the organizational unit. Are you sure you want to proceed?",
+    "destructive"
+  );
 
   if (isLoading) {
     return <Skeleton className="w-full h-[100px]" />;
@@ -53,6 +60,29 @@ export const InactiveUsers = ({ ouId, clientId }: ModulePropsTypes) => {
         },
         onError(error) {
           toast.error(error.message, {
+            position: "top-center",
+          });
+        },
+      }
+    );
+  };
+  // ! remove user
+  const handleRemoveUser = async (email: string) => {
+    const confirm = await confirmDelete();
+    if (!confirm || remove.isPending) return;
+    remove.mutate(
+      { email },
+      {
+        onSuccess: async (data) => {
+          toast.success(data?.message, {
+            position: "top-center",
+          });
+          await utils.organizationalUnits.getOuInactiveUsers.invalidate({
+            ouId,
+          });
+        },
+        onError(error) {
+          toast.error(error?.message, {
             position: "top-center",
           });
         },
@@ -110,27 +140,27 @@ export const InactiveUsers = ({ ouId, clientId }: ModulePropsTypes) => {
       },
     },
     {
-      accessorKey: "roleIds",
-      header: "Role",
-      cell: ({ row }) => {
-        const roleIds = row.getValue("roleIds") as string[];
-        return <div>roles</div>;
-      },
-    },
-    {
       header: "Action",
-      cell: ({ row }) => (
-        <div className="lowercase">
-          <Button size={"icon-sm"} variant={"ghost"}>
-            <Trash2Icon fill="currentColor" />
-          </Button>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const user = row?.original;
+        return (
+          <div className="lowercase">
+            <Button
+              onClick={() => handleRemoveUser(user?.username)}
+              size={"icon-sm"}
+              variant={"ghost"}
+            >
+              <Trash2Icon fill="currentColor" />
+            </Button>
+          </div>
+        );
+      },
     },
   ];
 
   return (
     <div>
+      <DeleteModal isPending={remove?.isPending} />
       <DataTable
         searchBy="username"
         columns={columns}

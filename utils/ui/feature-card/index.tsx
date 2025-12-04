@@ -23,7 +23,7 @@ export const FeatureCard = ({ children, title }: FeatureCardProps) => {
         <AccordionTrigger className="rounded-none px-3">
           {title}
         </AccordionTrigger>
-        <AccordionContent className="flex flex-col gap-4 text-balance px-4">
+        <AccordionContent className="flex flex-col gap-4 text-balance px-4 font-sans">
           {children}
         </AccordionContent>
       </AccordionItem>
