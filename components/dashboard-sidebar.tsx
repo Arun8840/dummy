@@ -1,6 +1,6 @@
-"use client";
-import * as React from "react";
-import * as Icons from "lucide-react";
+"use client"
+import * as React from "react"
+import * as Icons from "lucide-react"
 
 import {
   Sidebar,
@@ -14,40 +14,40 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
-import { trpc } from "@/trpc/client";
-import { Spinner } from "@/components/ui/spinner";
-import Image from "next/image";
-import Link from "next/link";
-import { toCamelCase } from "@/utils/functions/helpers";
-import { usePathname } from "next/navigation";
+} from "@/components/ui/sidebar"
+import { trpc } from "@/trpc/client"
+import { Spinner } from "@/components/ui/spinner"
+import Image from "next/image"
+import Link from "next/link"
+import { toCamelCase } from "@/utils/functions/helpers"
+import { usePathname } from "next/navigation"
 
 interface IconProps {
-  name: string; // icon name from API, e.g. "UserCircle"
-  className?: string;
-  color?: string;
+  name: string // icon name from API, e.g. "UserCircle"
+  className?: string
+  color?: string
 }
 
 interface ExtraProps {
-  menuTemplateId: string;
-  clientId?: string | number;
+  menuTemplateId: string
+  clientId?: string | number
 }
 
-type DashboardSidebarProps = React.ComponentProps<typeof Sidebar> & ExtraProps;
+type DashboardSidebarProps = React.ComponentProps<typeof Sidebar> & ExtraProps
 
 export function DashboardSidebar({
   menuTemplateId,
   clientId,
   ...props
 }: DashboardSidebarProps) {
-  const currentPath = usePathname();
-  const isAdmin = clientId === "0";
+  const currentPath = usePathname()
+  const isAdmin = clientId === "0"
   const { data: menus, isLoading } = trpc.dashboard.getMenu.useQuery({
     admin: isAdmin,
-    menuTemplateId,
-  });
+    menuTemplateId: menuTemplateId || "67727b96bcaa9d9f3108a48f",
+  })
 
-  const menuItems = menus?.data?.menus || [];
+  const menuItems = menus?.data?.menus || []
   return (
     <Sidebar {...props}>
       {isLoading ? (
@@ -92,8 +92,8 @@ export function DashboardSidebar({
                     {group.menus?.length ? (
                       <SidebarMenuSub>
                         {group.menus.map((item, itemIndex) => {
-                          const linkStr = `/${toCamelCase(item?.iname)}`;
-                          const isActive = currentPath === linkStr;
+                          const linkStr = `/${toCamelCase(item?.iname)}`
+                          const isActive = currentPath === linkStr
                           return (
                             <SidebarMenuSubItem
                               key={`menu_${itemIndex}-${item?.id}`}
@@ -109,7 +109,7 @@ export function DashboardSidebar({
                                 </Link>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
-                          );
+                          )
                         })}
                       </SidebarMenuSub>
                     ) : null}
@@ -123,19 +123,19 @@ export function DashboardSidebar({
         </>
       )}
     </Sidebar>
-  );
+  )
 }
 
 export const Icon: React.FC<IconProps> = ({ name, className, color }) => {
   const IconComponent = React.useMemo(() => {
-    const IconMap = Icons as unknown as Record<string, React.FC<any>>;
-    return IconMap[name] || null;
-  }, [name]);
+    const IconMap = Icons as unknown as Record<string, React.FC<any>>
+    return IconMap[name] || null
+  }, [name])
 
   if (!IconComponent) {
     // Fallback to a default icon if not found
-    return <Icons.Server className={className} color={color} />;
+    return <Icons.Server className={className} color={color} />
   }
 
-  return <IconComponent className={className} color={color} />;
-};
+  return <IconComponent className={className} color={color} />
+}

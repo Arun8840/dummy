@@ -29,7 +29,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ChevronDown, Sparkle, Sparkles } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 export function DataTable<TData, TValue>({
   columns,
@@ -37,6 +37,7 @@ export function DataTable<TData, TValue>({
   title = null,
   createAction: ActionElement,
   searchBy = "name",
+  initialPageSize = 8,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -63,6 +64,11 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
     },
+    initialState: {
+      pagination: {
+        pageSize: initialPageSize,
+      },
+    },
   })
 
   return (
@@ -71,7 +77,6 @@ export function DataTable<TData, TValue>({
         <div className="flex-1 hidden lg:block">
           {title && (
             <Button disabled variant={"ghost"} className="px-1 ">
-              <Sparkles className="dark:fill-yellow-300 dark:stroke-yellow-300" />
               {title}
             </Button>
           )}

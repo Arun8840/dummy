@@ -11,7 +11,7 @@ export interface TableTemplate {
   modifiedUserId: string | null
   modifiedDate: number | null
   type: string
-  tables: Table[]
+  tables: TableType[]
   parentTemplateId: string | null
   childTemplateIds: string[] | null
   childTemplates: any[] | null
@@ -22,7 +22,7 @@ export interface TableTemplate {
   modifiedDateString: string
 }
 
-export interface Table {
+export interface TableType {
   id: string
   clientId: number
   buId: string
@@ -44,9 +44,34 @@ export interface Table {
   componentType: string
   subComponentType: string
   roles: any[] | null
-  columns: any | null
-  tables: Table[]
+  columns: TableColumn[] | null
+  tables: TableType[]
   publishers: Publisher[]
+}
+export interface TableColumn {
+  id: string
+  containerId: string
+  name: string
+  displayName: string
+  iName: string
+  index: number
+  componentType: string
+  subComponentType: string
+  type: string
+  path: string | null
+  valuePath: string | null
+  valueString: string | null
+  valueDouble: number
+  valueBoolean: boolean
+  valueDate: string | null
+  valueInteger: number
+  vaults: any | null
+  hidden: boolean
+  createIndex: boolean
+  searchable: boolean
+  showInReports: boolean
+  showInInstance: boolean
+  mapColumn: boolean
 }
 
 export interface Menu {

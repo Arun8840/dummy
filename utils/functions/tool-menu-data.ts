@@ -37,6 +37,28 @@ const menuData: Record<string, ToolMenuType[]> = {
       icon: Icons.Users,
     },
   ],
+  "/table": [
+    {
+      title: "Design",
+      url: "/table",
+      icon: Icons.Pen,
+    },
+    {
+      title: "Preview",
+      url: "id/preview",
+      icon: Icons.Eye,
+    },
+    {
+      title: "Publish",
+      url: "/publish",
+      icon: Icons.Send,
+    },
+    {
+      title: "Security",
+      url: "/security",
+      icon: Icons.ShieldHalfIcon,
+    },
+  ],
 }
 
 export const toolMenu = (currentPath: string): ToolMenuType[] => {
@@ -51,8 +73,12 @@ export const toolMenu = (currentPath: string): ToolMenuType[] => {
   }
   // Check for path like /clients/:clientId/ou and match to /client/ou menu data
   const clientsOuRegex = /^\/clients\/[^\/]+\/ou/
+  const tableRegex = /^\/table\/[^\/]+/
   if (clientsOuRegex.test(currentPath)) {
     return [...menuData["/client/ou"], backItem]
+  }
+  if (tableRegex.test(currentPath)) {
+    return [...menuData["/table"], backItem]
   }
   return [backItem]
 }

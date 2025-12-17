@@ -79,7 +79,5 @@ export const authRouter = createTRPCRouter({
       tenant: "auth",
       data: { ...input },
     })
-
-    console.log(response)
   }),
 })

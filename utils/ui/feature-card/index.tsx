@@ -3,13 +3,12 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { ColumnDef } from "@tanstack/react-table";
-import React from "react";
+} from "@/components/ui/accordion"
+import React from "react"
 
 interface FeatureCardProps {
-  children: React.ReactNode;
-  title: string;
+  children: React.ReactNode
+  title: string
 }
 export const FeatureCard = ({ children, title }: FeatureCardProps) => {
   return (
@@ -28,5 +27,5 @@ export const FeatureCard = ({ children, title }: FeatureCardProps) => {
         </AccordionContent>
       </AccordionItem>
     </Accordion>
-  );
-};
+  )
+}

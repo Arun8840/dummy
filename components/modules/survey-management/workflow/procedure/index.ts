@@ -14,12 +14,13 @@ export const workflowRouter = createTRPCRouter({
       })
     }
 
-    return await adminTrpcApi<WorkflowTemplateResponse>(ctx, {
+    return await clientTrpcApi<WorkflowTemplateResponse>(ctx, {
       endpoint: "loadWorkflowTemplates",
-      tenant: "workflow",
+      tenant: "workflow/management",
       method: "GET",
     })
   }),
+
   template: protectedProcedure
     .input(
       z.object({
