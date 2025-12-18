@@ -8,13 +8,17 @@ import { clientRouter } from "@/components/modules/client-management/clients/pro
 import { ouRouter } from "@/components/modules/client-management/clients/ou-templates/procedure";
 import { clientAdminRouters } from "./clientAdmin-router";
 import { clientPlanRouter } from "@/components/modules/client-management/client-plan/procedure";
+import { globalRouters } from "@/components/common-procedure";
+import { menuRouter } from "@/components/modules/survey-management/menus/procedure";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
+  global: globalRouters,
   dashboard: dashboardRouter,
   workflow: workflowRouter,
   table: tableRouter,
   survey: surveyRouter,
+  menu: menuRouter,
   clients: clientRouter,
   clientPlans: clientPlanRouter,
   organizationalUnits: ouRouter,

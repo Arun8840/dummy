@@ -26,7 +26,7 @@ export const CustomCard: React.FC<CustomCardTypes> = ({
       {(title || description) && (
         <CardHeader className="p-0">
           {title && (
-            <CardTitle className="w-fit p-2 ring ring-green-600/40 bg-green-600/10 rounded">
+            <CardTitle className="p-2">
               {title}
             </CardTitle>
           )}
