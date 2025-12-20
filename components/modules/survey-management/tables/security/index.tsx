@@ -14,7 +14,7 @@ export const TableSecurity: React.FC<TableSecurityProps> = ({ template }) => {
     defaultValues: template,
   })
 
-  const tables = form.getValues("tables")
+  const tables = form.watch("tables")
   return (
     <section className="flex flex-col gap-2">
       <TableFormProvider value={form}>

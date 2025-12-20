@@ -141,12 +141,7 @@ export function TableTemplateData({ data }: TableTemplateDataProps) {
   // * create template
   const handleCreateTemplate = () => {
     return (
-      <Button
-        type="button"
-        variant={"gradient"}
-        onClick={open}
-        className="w-full sm:w-auto"
-      >
+      <Button type="button" onClick={open} className="w-full sm:w-auto">
         <Plus /> Create Table
       </Button>
     )

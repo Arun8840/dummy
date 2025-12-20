@@ -28,11 +28,7 @@ export const CustomCard: React.FC<CustomCardTypes> = ({
       {(title || description) && (
         <CardHeader className="p-0">
           <div className="flex items-center justify-between">
-            {title && (
-              <CardTitle className="p-2 text-stone-700 dark:text-primary">
-                {title}
-              </CardTitle>
-            )}
+            {title && <CardTitle className="p-2">{title}</CardTitle>}
             {CardAction}
           </div>
           {description && (

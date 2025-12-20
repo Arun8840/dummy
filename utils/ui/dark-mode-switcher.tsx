@@ -1,26 +1,26 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import * as React from "react"
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 type DarkModeSwitcherType = {
-  className?: string;
-};
-const baseClass = "rounded-full size-6";
+  className?: string
+}
+const baseClass = "shadow-none"
 export function DarkModeSwitcher({ className }: DarkModeSwitcherType) {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
   const toggleTheme = React.useCallback(() => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  }, [theme, setTheme]);
+    setTheme(theme === "dark" ? "light" : "dark")
+  }, [theme, setTheme])
 
   return (
     <Button
@@ -37,5 +37,5 @@ export function DarkModeSwitcher({ className }: DarkModeSwitcherType) {
         <Moon className="size-4" />
       )}
     </Button>
-  );
+  )
 }
