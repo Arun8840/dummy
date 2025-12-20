@@ -1,3 +1,5 @@
+import { MenuType, PermissionType } from ".."
+
 export interface TableTemplate {
   id: string
   clientId: number
@@ -21,6 +23,7 @@ export interface TableTemplate {
   createdDateString: string
   modifiedDateString: string
 }
+
 
 export interface TableType {
   id: string
@@ -47,6 +50,9 @@ export interface TableType {
   columns: TableColumn[] | null
   tables: TableType[]
   publishers: Publisher[]
+  menuTemplateId: string
+  menus: MenuType[]
+  permissions: PermissionType[]
 }
 export interface TableColumn {
   id: string

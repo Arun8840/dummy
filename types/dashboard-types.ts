@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react"
+import { MenuType } from "."
 
 export interface Permission {
   id: string
@@ -16,26 +17,6 @@ export interface MenuProperties {
   activeColor: string
 }
 
-export interface Menu {
-  id: string
-  templateId: string
-  containerId: string
-  menuId: string
-  name: string
-  iname: string
-  tname: string
-  resourceGroup: string
-  resource: string
-  path: string
-  iconName: string
-  order?: number
-  properties: MenuProperties
-  permissions: Permission[]
-  menus: Menu[]
-  createdDate: string
-  modifiedDate: string
-}
-
 export interface MenuResponse {
   id: string
   name: string
@@ -48,7 +29,7 @@ export interface MenuResponse {
   createdDate: string
   modifiedUserId: string
   modifiedDate: string
-  menus: Menu[]
+  menus: MenuType[]
 }
 
 export type ToolMenuType = {

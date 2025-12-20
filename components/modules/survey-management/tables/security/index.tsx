@@ -15,7 +15,6 @@ export const TableSecurity: React.FC<TableSecurityProps> = ({ template }) => {
   })
 
   const tables = form.getValues("tables")
-
   return (
     <section className="flex flex-col gap-2">
       <TableFormProvider value={form}>
@@ -27,8 +26,8 @@ export const TableSecurity: React.FC<TableSecurityProps> = ({ template }) => {
                 title={value?.name}
                 className="divide-y"
               >
-                {/* <TableMenu menus={[]} tableIdx={tableIdx} />
-                <TablePermission permissions={[]} tableIdx={tableIdx} />
+                <TableMenu menus={value?.menus} tableIdx={tableIdx} />
+                {/* <TablePermission permissions={[]} tableIdx={tableIdx} />
                 <TableRole roles={[]} tableIdx={tableIdx} /> */}
               </CustomCard>
             )
