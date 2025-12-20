@@ -24,7 +24,6 @@ export interface TableTemplate {
   modifiedDateString: string
 }
 
-
 export interface TableType {
   id: string
   clientId: number
@@ -39,7 +38,7 @@ export interface TableType {
   displayName: string
   showInMenu: boolean
   showInMap: boolean
-  menu: Menu
+  menu: MenuType
   type: string
   path: string
   aaRow: AaRow
@@ -78,42 +77,6 @@ export interface TableColumn {
   showInReports: boolean
   showInInstance: boolean
   mapColumn: boolean
-}
-
-export interface Menu {
-  id: string
-  containerId: string | null
-  menuId: string
-  name: string
-  iName: string | null
-  tName: string | null
-  type: string
-  groupName: string
-  url: string
-  path: string | null
-  iconName: string | null
-  icon: string | null
-  order: number
-  permissions: Permission[]
-  createdUserId: string
-  createdDate: number
-  modifiedUserId: string | null
-  modifiedDate: number | null
-  translation: any | null
-}
-
-export interface Permission {
-  id: string
-  containerId: string
-  clientId: number
-  buId: string
-  name: string
-  description: string | null
-  groupName: string
-  subGroupName: string | null
-  type: string
-  access: string
-  editable: boolean
 }
 
 export interface AaRow {

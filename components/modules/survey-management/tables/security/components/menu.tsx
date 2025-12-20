@@ -15,15 +15,24 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useGetMenuTemplates } from "@/hooks/use-get-menu"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-
+import { useState } from "react"
+import { CreateMenuForm } from "../../module-forms/create-menu-form"
+import { CreateMenuPermissionForm } from "../../module-forms/create-permission-form"
+import { MenuSchemaInput } from "../../schema"
+import { trpc } from "@/trpc/client"
+import { toast } from "sonner"
 interface TableMenuProps {
   menus: MenuType[]
   tableIdx: number
 }
 
+type ModalType = "MENU" | "MENUPERMISSION" | "PERMISSION" | null
+
 export const TableMenu: React.FC<TableMenuProps> = ({ menus, tableIdx }) => {
   // *HOOKS
   const form = useTableForm()
+  const create = trpc.table.createMenu.useMutation()
+  const currentTable = form?.getValues(`tables.${tableIdx}`)
   const menuTemplateId = form.watch(`tables.${tableIdx}.menuTemplateId`)
   const {
     isLoading: isSlotLoading,
@@ -32,10 +41,41 @@ export const TableMenu: React.FC<TableMenuProps> = ({ menus, tableIdx }) => {
   } = useGetSlots({ menuTemplateId })
   const { isLoading: isMenuTemplateLoading, data: menuTemplates } =
     useGetMenuTemplates()
+  const [showForm, setShowForm] = useState<ModalType>(null)
 
+  const triggerForm = (type: ModalType) => {
+    setShowForm(type)
+  }
   const handleSelectSlot = (slotId: string) => {
     const findSlot = slots?.find((existSlot) => existSlot?.id === slotId)
     console.log(findSlot)
+  }
+
+  // *CREATE MENU
+  const handleCreateMenu = async (data: MenuSchemaInput) => {
+    const request = {
+      templateId: currentTable?.containerId,
+      containerId: currentTable?.id,
+      componentType: "Menu",
+      menu: {
+        ...data,
+      },
+    }
+    create.mutate(request, {
+      onSuccess(res) {
+        toast.success(res?.message, {
+          position: "top-center",
+        })
+        const updatedMenus = [...menus, res?.data] as MenuType[]
+        form.setValue(`tables.${tableIdx}.menus`, updatedMenus)
+        triggerForm(null)
+      },
+      onError(error) {
+        toast.success(error?.message, {
+          position: "top-center",
+        })
+      },
+    })
   }
 
   const removeMenuPermission = (value: PermissionType) => {
@@ -114,21 +154,18 @@ export const TableMenu: React.FC<TableMenuProps> = ({ menus, tableIdx }) => {
 
   const PermissionChip = ({ value }: { value: PermissionType }) => {
     return (
-      <Badge className="flex items-center gap-1 bg-blue-700 text-primary pr-1 py-1 w-full">
-        <span className="mr-1">{value?.action}</span>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-5 p-0 ml-1 rounded-full"
-          type="button"
-          onClick={() => removeMenuPermission(value)}
-          tabIndex={0}
-        >
-          <X className="w-4 h-4" />
-        </Button>
-      </Badge>
+      <Button
+        variant="secondary"
+        type="button"
+        onClick={() => removeMenuPermission(value)}
+        tabIndex={0}
+      >
+        <small>{value?.action}</small>
+        <X />
+      </Button>
     )
   }
+
   return (
     <CustomCard
       className="border-0 p-0"
@@ -136,42 +173,60 @@ export const TableMenu: React.FC<TableMenuProps> = ({ menus, tableIdx }) => {
       description="This table allows you to manage menus. You can add or edit menu items, and assign their slot/position so that the menu appears in the main dashboard menu items."
       CardAction={<SelectMenuTemplate />}
     >
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-2">
-        {menus &&
-          menus?.map((menu, menuIdx) => {
-            return (
-              <CustomCard
-                title={`${menuIdx + 1}.${menu?.name}`}
-                key={`tableMenu_${menu?.id}`}
-                className="p-1 gap-0 hover:shadow transition-shadow"
-              >
-                <SelectSlot defaultValue={menu?.slotName || null} />
-                {/* //* menu permission items */}
-                <div className="grid lg:grid-cols-4 gap-2">
-                  {menu?.permissions?.map((permission, permissionIdx) => {
-                    return (
-                      <PermissionChip
-                        key={`menuPermission_${permission?.id}`}
-                        value={permission}
-                      />
-                    )
-                  })}
+      {showForm === "MENU" ? (
+        <CreateMenuForm
+          isPending={create?.isPending}
+          onCreate={handleCreateMenu}
+          onClose={() => setShowForm(null)}
+        />
+      ) : showForm === "MENUPERMISSION" ? (
+        <CreateMenuPermissionForm onClose={() => setShowForm(null)} />
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-2">
+          {menus &&
+            menus?.map((menu, menuIdx) => {
+              return (
+                <CustomCard
+                  title={`${menuIdx + 1}.${menu?.name}`}
+                  key={`tableMenu_${menu?.id}`}
+                  className="p-1 gap-0 hover:shadow transition-shadow"
+                >
+                  <SelectSlot defaultValue={menu?.slotName || null} />
+                  {/* //* menu permission items */}
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-2">
+                    {menu?.permissions?.map((permission, permissionIdx) => {
+                      return (
+                        <PermissionChip
+                          key={`menuPermission_${permission?.id}`}
+                          value={permission}
+                        />
+                      )
+                    })}
 
-                  <Badge
-                    variant={"outline"}
-                    className="flex items-center gap-1 pr-1 py-1 w-full border border-dashed hover:bg-secondary transition-colors"
-                  >
-                    <Plus />
-                  </Badge>
-                </div>
-              </CustomCard>
-            )
-          })}
-        {/* // *ADD NEW TABLE MENU */}
-        <CustomCard className="grid place-items-center border-dashed hover:bg-secondary transition-colors">
-          <Plus />
-        </CustomCard>
-      </div>
+                    <Button
+                      onClick={() => triggerForm("MENUPERMISSION")}
+                      type="button"
+                      variant={"outline"}
+                      className="size-full border-dashed"
+                    >
+                      <Plus />
+                    </Button>
+                  </div>
+                </CustomCard>
+              )
+            })}
+          {/* // *ADD NEW TABLE MENU */}
+
+          <Button
+            onClick={() => triggerForm("MENU")}
+            type="button"
+            variant={"outline"}
+            className="size-full border-dashed min-h-30"
+          >
+            <Plus />
+          </Button>
+        </div>
+      )}
     </CustomCard>
   )
 }

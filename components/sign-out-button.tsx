@@ -10,7 +10,7 @@ interface SignOutButtonProps {
   className?: string
 }
 
-const baseClass = ""
+const baseClass = "shadow-none"
 export default function SignOutButton({
   children,
   className,

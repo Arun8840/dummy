@@ -14,30 +14,31 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { trpc } from "@/trpc/client"
 import { Spinner } from "@/components/ui/spinner"
-import { menuSchema, MenuSchemaInput } from "../schema"
+import { permissionSchema, PermissionSchemaInput } from "../schema"
 import React from "react"
 
-interface CreateMenuFormProps {
+interface CreateMenuPermissionFormProps {
   onClose: () => void
-  onCreate: (formValue: MenuSchemaInput) => void
-  isPending: boolean
 }
-export const CreateMenuForm: React.FC<CreateMenuFormProps> = ({
-  onClose,
-  onCreate,
-  isPending,
-}) => {
-  const form = useForm<MenuSchemaInput>({
+export const CreateMenuPermissionForm: React.FC<
+  CreateMenuPermissionFormProps
+> = ({ onClose }) => {
+  const create = trpc.table.create.useMutation()
+  const form = useForm<PermissionSchemaInput>({
     defaultValues: {
-      name: "",
-      url: "",
+      type: "",
       resource: "",
-      iconName: "",
-      iName: "",
       resourceGroup: "",
+      service: "",
+      action: "",
     },
-    resolver: zodResolver(menuSchema),
+    resolver: zodResolver(permissionSchema),
   })
+
+  const onCreate: SubmitHandler<PermissionSchemaInput> = async (data) => {
+    const request = { ...data }
+    console.log(request)
+  }
 
   return (
     <Form {...form}>
@@ -48,10 +49,10 @@ export const CreateMenuForm: React.FC<CreateMenuFormProps> = ({
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 flex-1">
           <FormField
             control={form.control}
-            name="name"
+            name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Table Name</FormLabel>
+                <FormLabel>Type</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -60,19 +61,6 @@ export const CreateMenuForm: React.FC<CreateMenuFormProps> = ({
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="url"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Url</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="resource"
@@ -86,6 +74,7 @@ export const CreateMenuForm: React.FC<CreateMenuFormProps> = ({
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="resourceGroup"
@@ -101,10 +90,10 @@ export const CreateMenuForm: React.FC<CreateMenuFormProps> = ({
           />
           <FormField
             control={form.control}
-            name="iconName"
+            name="service"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>IconName</FormLabel>
+                <FormLabel>Service</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -114,10 +103,10 @@ export const CreateMenuForm: React.FC<CreateMenuFormProps> = ({
           />
           <FormField
             control={form.control}
-            name="iName"
+            name="action"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>IName</FormLabel>
+                <FormLabel>Action</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -128,8 +117,8 @@ export const CreateMenuForm: React.FC<CreateMenuFormProps> = ({
         </div>
 
         <div className="flex items-center justify-end gap-2">
-          <Button type="submit" disabled={isPending}>
-            {isPending ? <Spinner /> : "Create Menu"}
+          <Button type="submit" disabled={create.isPending}>
+            {create.isPending ? <Spinner /> : "Create Permission"}
           </Button>
           <Button variant={"secondary"} type="button" onClick={onClose}>
             Cancel

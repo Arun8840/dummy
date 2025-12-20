@@ -16,7 +16,7 @@ export const FeatureCard = ({ children, title }: FeatureCardProps) => {
       type="single"
       collapsible
       defaultValue="item-1"
-      className="w-full border rounded-lg"
+      className="w-full border rounded-lg bg-card"
     >
       <AccordionItem value="item-1">
         <AccordionTrigger className="rounded-none px-3">
