@@ -19,6 +19,7 @@ import Link from "next/link"
 import { DarkModeSwitcher } from "@/utils/ui/dark-mode-switcher"
 import SignOutButton from "./sign-out-button"
 import { LogOut } from "lucide-react"
+import { ThemeSelector } from "@/utils/ui/theme-selector"
 
 interface ExtraProps {}
 
@@ -74,12 +75,17 @@ export function ToolSidebar({ ...props }: ToolSidebarProps) {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
+            <ThemeSelector className="size-8 mx-auto rounded" />
+          </SidebarMenuItem>
+        </SidebarMenu>
+        <SidebarMenu>
+          <SidebarMenuItem>
             <DarkModeSwitcher className="size-8 mx-auto rounded" />
           </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SignOutButton>
+            <SignOutButton className="size-8 mx-auto rounded">
               <LogOut />
             </SignOutButton>
           </SidebarMenuItem>

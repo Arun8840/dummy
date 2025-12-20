@@ -11,6 +11,7 @@ import React, { HTMLAttributes } from "react"
 interface CustomCardTypes extends HTMLAttributes<HTMLDivElement> {
   title?: string | undefined
   description?: string | undefined
+  CardAction?: React.ReactNode
 }
 
 const baseClass = "p-2 shadow-none rounded-md gap-2"
@@ -19,17 +20,17 @@ export const CustomCard: React.FC<CustomCardTypes> = ({
   description,
   children,
   className,
+  CardAction,
   ...OtherProps
 }) => {
   return (
     <Card className={cn(baseClass, className)}>
       {(title || description) && (
         <CardHeader className="p-0">
-          {title && (
-            <CardTitle className="w-fit p-2 ring ring-green-600/40 bg-green-600/10 rounded">
-              {title}
-            </CardTitle>
-          )}
+          <div className="flex items-center justify-between">
+            {title && <CardTitle className="p-2">{title}</CardTitle>}
+            {CardAction}
+          </div>
           {description && (
             <CardDescription className="text-xs px-1">
               {description}

@@ -12,6 +12,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar"
 import UserInfo from "./user-info"
 import { User } from "@/types/auth-types"
 import { DarkModeSwitcher } from "@/utils/ui/dark-mode-switcher"
+import { ThemeSelector } from "@/utils/ui/theme-selector"
 
 interface DashboardNavHeaderProps {
   user: User
@@ -38,6 +39,7 @@ export default function DashboardNavHeader({ user }: DashboardNavHeaderProps) {
       </div>
       <div className="p-2 flex items-center gap-x-2">
         <DarkModeSwitcher />
+        <ThemeSelector />
         <UserInfo {...user} />
       </div>
     </header>
