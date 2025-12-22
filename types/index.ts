@@ -27,6 +27,7 @@ export interface MenuType {
   modifiedDate: string | null
   translation: any | null
   slot: boolean
+  isSlot?: boolean
 }
 
 export type MenuResponse = MenuType[]
@@ -43,4 +44,10 @@ export interface PermissionType {
   resource: string
   action: string
   editable: boolean
+}
+
+export interface RoleWithPermissions {
+  roleId: string
+  roleName: string
+  permissions: PermissionType[]
 }

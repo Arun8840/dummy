@@ -14,7 +14,7 @@ export const Warning = ({
   title,
   variant = "default",
   description,
-  className
+  className,
 }: WarningProps) => {
   return (
     <div className="size-full flex justify-center items-center">

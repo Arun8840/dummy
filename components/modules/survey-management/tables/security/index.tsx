@@ -13,22 +13,24 @@ export const TableSecurity: React.FC<TableSecurityProps> = ({ template }) => {
   const form = useForm<TableTemplate>({
     defaultValues: template,
   })
-
   const tables = form.watch("tables")
+
   return (
-    <section className="flex flex-col gap-2">
+    <section className="size-full flex flex-col gap-3">
       <TableFormProvider value={form}>
         {tables?.length > 0 &&
           tables?.map((value, tableIdx) => {
             return (
               <CustomCard
                 key={value?.id}
-                title={value?.name}
-                className="divide-y"
+                title={`${tableIdx + 1}. ${value?.name}`}
               >
                 <TableMenu menus={value?.menus} tableIdx={tableIdx} />
-                {/* <TablePermission permissions={[]} tableIdx={tableIdx} />
-                <TableRole roles={[]} tableIdx={tableIdx} /> */}
+                <TablePermission
+                  permissions={value?.permissions || []}
+                  tableIdx={tableIdx}
+                />
+                <TableRole roles={value?.roles || []} tableIdx={tableIdx} />
               </CustomCard>
             )
           })}
