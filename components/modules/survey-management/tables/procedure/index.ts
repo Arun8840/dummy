@@ -6,7 +6,13 @@ import {
 } from "@/types/survey-management/table-types"
 import { TRPCError } from "@trpc/server"
 import z from "zod"
-import { createTableSchema, menuSchema, permissionSchema } from "../schema"
+import {
+  addComponentInputSchema,
+  assignRolePermissionInput,
+  createTableSchema,
+  removeMenuInput,
+  saveComponentInputSchame,
+} from "../schema"
 
 export const tableRouter = createTRPCRouter({
   templates: protectedProcedure.query(async ({ ctx }) => {
@@ -111,16 +117,66 @@ export const tableRouter = createTRPCRouter({
       }
     }),
 
-  // * TABLE SECURITY RELATED SERVICES
-  createMenu: protectedProcedure
-    .input(
-      z.object({
-        templateId: z.string().min(1, "Template ID is required"),
-        containerId: z.string().min(1, "Container ID is required"),
-        componentType: z.string().min(1, "Component Type is required"),
-        menu: menuSchema,
+  save: protectedProcedure
+    .input(saveComponentInputSchame)
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+
+      const res = await clientTrpcApi<TableTemplate>(ctx, {
+        endpoint: `saveTableComponent`,
+        tenant: "table/management",
+        method: "POST",
+        data: input,
       })
-    )
+
+      return {
+        status: res.status,
+        data: res.data,
+        message: res.message,
+      }
+    }),
+
+  // * TABLE SECURITY RELATED SERVICES
+  addComponent: protectedProcedure
+    .input(addComponentInputSchema)
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+
+      const { templateId, containerId } = input
+
+      if (!templateId || !containerId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Template ID and Container ID are required.",
+        })
+      }
+
+      const res = await clientTrpcApi(ctx, {
+        endpoint: `addTableComponent`,
+        tenant: "table/management",
+        method: "POST",
+        data: input,
+      })
+
+      return {
+        status: res?.status,
+        message: res?.message,
+        data: res?.data,
+      }
+    }),
+
+  removeComponent: protectedProcedure
+    .input(removeMenuInput)
     .mutation(async ({ input, ctx }) => {
       if (!ctx.access_token) {
         throw new TRPCError({
@@ -139,7 +195,7 @@ export const tableRouter = createTRPCRouter({
       }
 
       const res = await clientTrpcApi<TableTemplate>(ctx, {
-        endpoint: `addTableComponent`,
+        endpoint: `removeTableComponent`,
         tenant: "table/management",
         method: "POST",
         data: input,
@@ -152,14 +208,36 @@ export const tableRouter = createTRPCRouter({
       }
     }),
 
-  createMenuPermission: protectedProcedure
-    .input(permissionSchema)
+  assignRolePermission: protectedProcedure
+    .input(assignRolePermissionInput)
     .mutation(async ({ input, ctx }) => {
       if (!ctx.access_token) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "User is not authenticated.",
         })
+      }
+
+      const { tableId, templateId } = input
+
+      if (!templateId || !tableId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Template ID and Container ID are required.",
+        })
+      }
+
+      const res = await clientTrpcApi<TableTemplate>(ctx, {
+        endpoint: `assignTablePermissionsToRoles`,
+        tenant: "table/management",
+        method: "POST",
+        data: input,
+      })
+
+      return {
+        status: res?.status,
+        message: res?.message,
+        data: res?.data,
       }
     }),
 })
