@@ -1,4 +1,4 @@
-import { MenuType, PermissionType } from ".."
+import { MenuType, PermissionType, RoleWithPermissions } from ".."
 
 export interface TableTemplate {
   id: string
@@ -45,7 +45,7 @@ export interface TableType {
   classification: string | null
   componentType: string
   subComponentType: string
-  roles: any[] | null
+  roles: RoleWithPermissions[] | null
   columns: TableColumn[] | null
   tables: TableType[]
   publishers: Publisher[]

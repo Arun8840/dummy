@@ -16,14 +16,16 @@ import { trpc } from "@/trpc/client"
 import { Spinner } from "@/components/ui/spinner"
 import { permissionSchema, PermissionSchemaInput } from "../schema"
 import React from "react"
+import { PermissionType } from "@/types"
 
 interface CreateMenuPermissionFormProps {
   onClose: () => void
+  onCreate: (value: PermissionSchemaInput) => void
+  isPending: boolean
 }
 export const CreateMenuPermissionForm: React.FC<
   CreateMenuPermissionFormProps
-> = ({ onClose }) => {
-  const create = trpc.table.create.useMutation()
+> = ({ onClose, onCreate, isPending }) => {
   const form = useForm<PermissionSchemaInput>({
     defaultValues: {
       type: "",
@@ -34,11 +36,6 @@ export const CreateMenuPermissionForm: React.FC<
     },
     resolver: zodResolver(permissionSchema),
   })
-
-  const onCreate: SubmitHandler<PermissionSchemaInput> = async (data) => {
-    const request = { ...data }
-    console.log(request)
-  }
 
   return (
     <Form {...form}>
@@ -117,8 +114,8 @@ export const CreateMenuPermissionForm: React.FC<
         </div>
 
         <div className="flex items-center justify-end gap-2">
-          <Button type="submit" disabled={create.isPending}>
-            {create.isPending ? <Spinner /> : "Create Permission"}
+          <Button type="submit" disabled={isPending}>
+            {isPending ? <Spinner /> : "Create Permission"}
           </Button>
           <Button variant={"secondary"} type="button" onClick={onClose}>
             Cancel
