@@ -1,45 +1,45 @@
-"use client";
+"use client"
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { Switch } from "@/components/ui/switch";
-import { useStore } from "@/lib/stores";
-import { trpc } from "@/trpc/client";
-import { OuUsers } from "@/types/client-management/ou-module-types";
-import { DataTable } from "@/utils/ui/data-table/table-component";
-import { ModalDrawer } from "@/utils/ui/modal-drawer";
-import { ColumnDef } from "@tanstack/react-table";
-import { Pen, Plus } from "lucide-react";
-import { CreateUserForm } from "../module-forms/create-user-form";
-import { useGetModalState } from "@/hooks/use-modal-state";
-import { useGetRoles } from "@/hooks/use-get-roles";
-import { toast } from "sonner";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
+import { Switch } from "@/components/ui/switch"
+import { useStore } from "@/lib/stores"
+import { trpc } from "@/trpc/client"
+import { OuUsers } from "@/types/client-management/ou-module-types"
+import { DataTable } from "@/utils/ui/data-table/table-component"
+import { ModalDrawer } from "@/utils/ui/modal-drawer"
+import { ColumnDef } from "@tanstack/react-table"
+import { Pen, Plus } from "lucide-react"
+import { CreateUserForm } from "../module-forms/create-user-form"
+import { useGetModalState } from "@/hooks/use-modal-state"
+import { useGetRoles } from "@/hooks/use-get-roles"
+import { toast } from "sonner"
 
 export default function UserTemplates() {
-  const clientData = useStore((s) => s.loginExp);
-  const clientId = clientData?.user?.clientId ?? "";
-  const ouId = clientData?.user?.ouId ?? "";
+  const clientData = useStore((s) => s.loginExp)
+  const clientId = clientData?.user?.clientId ?? ""
+  const ouId = clientData?.user?.ouId ?? ""
 
   // * hook
-  const utils = trpc.useUtils();
+  const utils = trpc.useUtils()
   const { open, isOpen, setIsOpen, close } = useGetModalState({
     value: "create-client-user",
-  });
-  const { data: publihsedRole, isLoading: isRoleLoading } = useGetRoles();
+  })
+  const { data: publihsedRole, isLoading: isRoleLoading } = useGetRoles()
   const { isLoading, data } = trpc.clientAdmin.users.getAllUsers.useQuery({
     clientId: clientId,
-  });
-  const disable = trpc.organizationalUnits.disableUser.useMutation();
+  })
+  const disable = trpc.organizationalUnits.disableUser.useMutation()
 
-  const userItems = data?.data || [];
+  const userItems = data?.data || []
 
   if (isLoading) {
     return (
       <div className="size-full grid place-items-center">
         <Spinner />
       </div>
-    );
+    )
   }
 
   // ! disable user
@@ -50,31 +50,31 @@ export default function UserTemplates() {
         onSuccess: async (data) => {
           toast.success(data.message, {
             position: "top-center",
-          });
+          })
 
-          await utils.clientAdmin.users.getAllUsers.invalidate({ clientId });
+          await utils.clientAdmin.users.getAllUsers.invalidate({ clientId })
         },
         onError(error) {
           toast.error(error.message, {
             position: "top-center",
-          });
+          })
         },
       }
-    );
-  };
+    )
+  }
 
   const columns: ColumnDef<OuUsers>[] = [
     {
       accessorKey: "profilePicture", // Assuming there is a field for user avatar/profile picture
       header: "User",
       cell: ({ row }) => {
-        const firstName = row.getValue("firstName") as string;
-        const fallBackName = firstName.charAt(0).toUpperCase();
+        const firstName = row.getValue("firstName") as string
+        const fallBackName = firstName.charAt(0).toUpperCase()
         return (
           <Avatar>
             <AvatarFallback>{fallBackName}</AvatarFallback>
           </Avatar>
-        );
+        )
       },
       enableSorting: false,
       enableHiding: false,
@@ -103,21 +103,21 @@ export default function UserTemplates() {
     {
       header: "Disable User",
       cell: ({ row }) => {
-        const userRow = row.original;
+        const userRow = row.original
         return (
           <Switch
             onCheckedChange={() => handle_disableUser(userRow?.username)}
             defaultChecked
           />
-        );
+        )
       },
     },
     {
       accessorKey: "roleIds",
       header: "Role",
       cell: ({ row }) => {
-        const roleIds = row.getValue("roleIds") as string[];
-        return <div>role</div>;
+        const roleIds = row.getValue("roleIds") as string[]
+        return <div>role</div>
       },
     },
     {
@@ -130,7 +130,7 @@ export default function UserTemplates() {
         </div>
       ),
     },
-  ];
+  ]
 
   // * create user
   const createUser = () => {
@@ -139,14 +139,13 @@ export default function UserTemplates() {
         title="Create Client"
         type="button"
         size={"sm"}
-        variant="gradient"
         className="w-full sm:w-auto"
         onClick={open}
       >
         <Plus /> Create User
       </Button>
-    );
-  };
+    )
+  }
   return (
     <div>
       <ModalDrawer
@@ -172,5 +171,5 @@ export default function UserTemplates() {
         createAction={createUser}
       />
     </div>
-  );
+  )
 }
