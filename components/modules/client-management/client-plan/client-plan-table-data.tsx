@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table"
 import {
   ArrowUpRight,
   BadgeCheckIcon,
@@ -8,29 +8,29 @@ import {
   MoreHorizontal,
   Plus,
   Trash,
-} from "lucide-react";
+} from "lucide-react"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
 
-import { DataTable } from "@/utils/ui/data-table/table-component";
+import { DataTable } from "@/utils/ui/data-table/table-component"
 
-import { getDate } from "@/utils/functions/helpers";
-import { Badge } from "@/components/ui/badge";
-import { useGetModalState } from "@/hooks/use-modal-state";
-import { ModalDrawer } from "@/utils/ui/modal-drawer";
-import Link from "next/link";
-import { encryptClient } from "@/utils/functions/encrypt/client-encryption";
-import { ClientPlan } from "@/types/client-management/client-plan-types";
+import { getDate } from "@/utils/functions/helpers"
+import { Badge } from "@/components/ui/badge"
+import { useGetModalState } from "@/hooks/use-modal-state"
+import { ModalDrawer } from "@/utils/ui/modal-drawer"
+import Link from "next/link"
+import { encryptClient } from "@/utils/functions/encrypt/client-encryption"
+import { ClientPlan } from "@/types/client-management/client-plan-types"
 
 interface ClientTemplateDataProps {
-  data: ClientPlan[];
+  data: ClientPlan[]
 }
 
 // Correct columns for workflow templates (field names and accessorKeys)
@@ -59,8 +59,8 @@ const columns: ColumnDef<ClientPlan>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const value = row.getValue("status") as "Draft" | "Published";
-      const isPublished = value === "Published";
+      const value = row.getValue("status") as "Draft" | "Published"
+      const isPublished = value === "Published"
       return (
         <Badge
           data-published={isPublished}
@@ -70,7 +70,7 @@ const columns: ColumnDef<ClientPlan>[] = [
           <BadgeCheckIcon />
           {value}
         </Badge>
-      );
+      )
     },
   },
   {
@@ -78,8 +78,8 @@ const columns: ColumnDef<ClientPlan>[] = [
     enableHiding: false,
     header: () => <div className="text-left">Action</div>,
     cell: ({ row }) => {
-      const template = row.original;
-      const encryptedId = encryptClient(template?.id);
+      const template = row.original
+      const encryptedId = encryptClient(template?.id)
 
       return (
         <DropdownMenu>
@@ -102,15 +102,15 @@ const columns: ColumnDef<ClientPlan>[] = [
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      );
+      )
     },
   },
-];
+]
 
 export function ClientPlanTableData({ data }: ClientTemplateDataProps) {
   const { open, isOpen, setIsOpen, close } = useGetModalState({
     value: "create-client-plan",
-  });
+  })
 
   const createAction = () => {
     return (
@@ -119,13 +119,12 @@ export function ClientPlanTableData({ data }: ClientTemplateDataProps) {
         type="button"
         onClick={open}
         size={"sm"}
-        variant="gradient"
         className="w-full sm:w-auto"
       >
         <Plus /> Create Client Plan
       </Button>
-    );
-  };
+    )
+  }
   return (
     <div className="w-full">
       {/* <ModalDrawer title="Create Client" open={isOpen} setOpen={setIsOpen}>
@@ -138,5 +137,5 @@ export function ClientPlanTableData({ data }: ClientTemplateDataProps) {
         title={"Client Plans"}
       />
     </div>
-  );
+  )
 }

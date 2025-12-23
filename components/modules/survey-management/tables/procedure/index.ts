@@ -141,6 +141,41 @@ export const tableRouter = createTRPCRouter({
       }
     }),
 
+  publish: protectedProcedure
+    .input(
+      z.object({
+        templateId: z.string().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+      const { templateId } = input
+
+      if (!templateId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Table template ID is required.",
+        })
+      }
+
+      const res = await clientTrpcApi<TableTemplate>(ctx, {
+        endpoint: `publishTableTemplate/${templateId}`,
+        tenant: "table/management",
+        method: "POST",
+      })
+
+      return {
+        status: res?.status,
+        message: res?.message,
+        data: res?.data,
+      }
+    }),
+
   // * TABLE SECURITY RELATED SERVICES
   addComponent: protectedProcedure
     .input(addComponentInputSchema)

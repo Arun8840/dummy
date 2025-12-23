@@ -1,38 +1,38 @@
-"use client";
+"use client"
 
-import { trpc } from "@/trpc/client";
-import { ModulePropsTypes } from "../ou-modules";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ColumnDef } from "@tanstack/react-table";
-import { OuUsers } from "@/types/client-management/ou-module-types";
-import { DataTable } from "@/utils/ui/data-table/table-component";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { BadgeCheck, Pen, Plus } from "lucide-react";
-import { Warning } from "@/utils/ui/warning";
-import { ModalDrawer } from "@/utils/ui/modal-drawer";
-import { CreateUserForm } from "./module-forms/create-user-form";
-import { useGetModalState } from "@/hooks/use-modal-state";
-import { useGetRoles } from "@/hooks/use-get-roles";
-import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
+import { trpc } from "@/trpc/client"
+import { ModulePropsTypes } from "../ou-modules"
+import { Skeleton } from "@/components/ui/skeleton"
+import { ColumnDef } from "@tanstack/react-table"
+import { OuUsers } from "@/types/client-management/ou-module-types"
+import { DataTable } from "@/utils/ui/data-table/table-component"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Switch } from "@/components/ui/switch"
+import { Button } from "@/components/ui/button"
+import { BadgeCheck, Pen, Plus } from "lucide-react"
+import { Warning } from "@/utils/ui/warning"
+import { ModalDrawer } from "@/utils/ui/modal-drawer"
+import { CreateUserForm } from "./module-forms/create-user-form"
+import { useGetModalState } from "@/hooks/use-modal-state"
+import { useGetRoles } from "@/hooks/use-get-roles"
+import { toast } from "sonner"
+import { Badge } from "@/components/ui/badge"
 
 export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
   // * hook
   const { open, isOpen, setIsOpen, close } = useGetModalState({
     value: "create-ou-user",
-  });
-  const { data: publihsedRole, isLoading: isRoleLoading } = useGetRoles();
-  const utils = trpc.useUtils();
+  })
+  const { data: publihsedRole, isLoading: isRoleLoading } = useGetRoles()
+  const utils = trpc.useUtils()
   const { data, isLoading, isError } =
     trpc.organizationalUnits.getOuUsers.useQuery({
       ouId,
-    });
-  const disable = trpc.organizationalUnits.disableUser.useMutation();
+    })
+  const disable = trpc.organizationalUnits.disableUser.useMutation()
 
   if (isLoading) {
-    return <Skeleton className="w-full h-[100px]" />;
+    return <Skeleton className="w-full h-[100px]" />
   }
 
   if (isError) {
@@ -42,9 +42,9 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
         description="There was a problem loading users for this organizational unit. Please try again later."
         variant="destructive"
       />
-    );
+    )
   }
-  const users = data?.data || [];
+  const users = data?.data || []
   // ! disable user
   const handle_disableUser = (email: string) => {
     disable.mutate(
@@ -53,32 +53,32 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
         onSuccess: async (data) => {
           toast.success(data.message, {
             position: "top-center",
-          });
+          })
           await Promise.all([
             utils.organizationalUnits.getOuInactiveUsers.invalidate({ ouId }),
             utils.organizationalUnits.getOuUsers.invalidate({ ouId }),
-          ]);
+          ])
         },
         onError(error) {
           toast.error(error.message, {
             position: "top-center",
-          });
+          })
         },
       }
-    );
-  };
+    )
+  }
   const columns: ColumnDef<OuUsers>[] = [
     {
       accessorKey: "profilePicture", // Assuming there is a field for user avatar/profile picture
       header: "User",
       cell: ({ row }) => {
-        const firstName = row.getValue("firstName") as string;
-        const fallBackName = firstName.charAt(0).toUpperCase();
+        const firstName = row.getValue("firstName") as string
+        const fallBackName = firstName.charAt(0).toUpperCase()
         return (
           <Avatar>
             <AvatarFallback>{fallBackName}</AvatarFallback>
           </Avatar>
-        );
+        )
       },
       enableSorting: false,
       enableHiding: false,
@@ -107,23 +107,23 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
     {
       header: "Disable User",
       cell: ({ row }) => {
-        const userRow = row.original;
+        const userRow = row.original
         return (
           <Switch
             onCheckedChange={() => handle_disableUser(userRow?.username)}
             defaultChecked
           />
-        );
+        )
       },
     },
     {
       accessorKey: "roleIds",
       header: "Role",
       cell: ({ row }) => {
-        const roleIds = row.getValue("roleIds") as string[];
+        const roleIds = row.getValue("roleIds") as string[]
         const userRoles = publihsedRole?.filter((role) =>
           roleIds?.includes(role?.id)
-        );
+        )
         return (
           <div className="flex flex-wrap gap-1 max-w-sm">
             {userRoles?.map((ur) => {
@@ -134,10 +134,10 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
                 >
                   <BadgeCheck /> {ur?.name}
                 </Badge>
-              );
+              )
             })}
           </div>
-        );
+        )
       },
     },
     {
@@ -150,7 +150,7 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
         </div>
       ),
     },
-  ];
+  ]
   const createUser = () => {
     return (
       <Button
@@ -158,13 +158,12 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
         type="button"
         onClick={open}
         size={"sm"}
-        variant="gradient"
         className="w-full sm:w-auto"
       >
         <Plus /> Create User
       </Button>
-    );
-  };
+    )
+  }
 
   return (
     <div>
@@ -192,5 +191,5 @@ export const Users = ({ ouId, clientId }: ModulePropsTypes) => {
         createAction={createUser}
       />
     </div>
-  );
-};
+  )
+}
