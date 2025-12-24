@@ -1,7 +1,9 @@
-import { adminTrpcApi } from "@/lib/apis/trpc-admin"
 import { clientTrpcApi } from "@/lib/apis/trpc-client"
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init"
-import { WorkflowTemplateResponse } from "@/types/survey-management/workflow-types"
+import {
+  WorkflowTemplate,
+  WorkflowTemplateResponse,
+} from "@/types/survey-management/workflow-types"
 import { TRPCError } from "@trpc/server"
 import z from "zod"
 
@@ -36,11 +38,70 @@ export const workflowRouter = createTRPCRouter({
       }
 
       const { templateId } = input
+      if (!templateId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Template ID is required.",
+        })
+      }
 
-      return await adminTrpcApi(ctx, {
+      const res = await clientTrpcApi<WorkflowTemplate>(ctx, {
         endpoint: `loadWorkflowTemplate/${templateId}`,
-        tenant: "workflow",
+        tenant: "workflow/management",
         method: "GET",
       })
+
+      return {
+        status: res?.success,
+        message: res?.message,
+        data: res?.data,
+      }
+    }),
+
+  // * DRAG ITEMS
+  components: protectedProcedure.query(async ({ ctx, input }) => {
+    if (!ctx.access_token) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "User is not authenticated.",
+      })
+    }
+
+    const res = await clientTrpcApi<WorkflowTemplate>(ctx, {
+      endpoint: `loadWorkflowComponents`,
+      tenant: "workflow/management",
+      method: "GET",
+    })
+
+    return {
+      status: res?.success,
+      message: res?.message,
+      data: res?.data,
+    }
+  }),
+
+  // *CRUD SERVICES
+  addComponent: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+
+      const res = await clientTrpcApi<WorkflowTemplate>(ctx, {
+        endpoint: `addWorkflowComponent`,
+        tenant: "workflow/management",
+        method: "POST",
+        data: input,
+      })
+
+      return {
+        status: res?.success,
+        message: res?.message,
+        data: res?.data,
+      }
     }),
 })
