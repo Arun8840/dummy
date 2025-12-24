@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
+import { ArrowUpRight, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -18,6 +18,7 @@ import {
 } from "@/types/survey-management/workflow-types"
 import { DataTable } from "@/utils/ui/data-table/table-component"
 import { getDate } from "@/utils/functions/helpers"
+import Link from "next/link"
 
 interface WorkflowTableProps {
   data: WorkflowTemplateResponse
@@ -68,12 +69,11 @@ export const columns: ColumnDef<WorkflowTemplate>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() =>
-                template.id && navigator.clipboard.writeText(template.id)
-              }
-            >
-              View details
+            <DropdownMenuItem asChild>
+              <Link href={`/workflow/${template?.id}`}>
+                <ArrowUpRight />
+                Open {template?.name}
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive">Remove</DropdownMenuItem>

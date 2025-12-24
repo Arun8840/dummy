@@ -6,7 +6,7 @@ export interface WorkflowTemplate {
   version: number
   name: string
   description: string
-  status: string
+  status: "Draft" | "Published"
   createdUserId: string
   createdDate: number
   modifiedUserId: string
