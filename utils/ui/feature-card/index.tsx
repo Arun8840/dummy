@@ -11,21 +11,23 @@ interface FeatureCardProps {
   children: React.ReactNode
   title: string
   className?: string
+  value?: string
 }
 const baseClass = "w-full border rounded-lg bg-card"
 export const FeatureCard = ({
   children,
   title,
   className,
+  value = "Item",
 }: FeatureCardProps) => {
   return (
     <Accordion
       type="single"
       collapsible
-      defaultValue="item-1"
+      defaultValue={value}
       className={cn(baseClass, className)}
     >
-      <AccordionItem value="item-1">
+      <AccordionItem value={value}>
         <AccordionTrigger className="rounded-none px-3">
           {title}
         </AccordionTrigger>

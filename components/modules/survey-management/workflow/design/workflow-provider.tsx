@@ -2,7 +2,18 @@ import { WorkflowTemplate } from "@/types/survey-management/workflow-types"
 import React, { createContext, useContext } from "react"
 import { UseFormReturn } from "react-hook-form"
 
-type WorkflowFormContextType = UseFormReturn<WorkflowTemplate>
+type EditStateTypes = {
+  overAll: {
+    stepId: string | null
+  }
+  isRule: {
+    ruleId: string | null
+  }
+}
+type WorkflowFormContextType = UseFormReturn<WorkflowTemplate> & {
+  edit: EditStateTypes
+  setEdit: React.Dispatch<React.SetStateAction<EditStateTypes>>
+}
 
 const WorkflowFormContext = createContext<WorkflowFormContextType | undefined>(
   undefined
