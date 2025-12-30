@@ -9,7 +9,11 @@ export const WorkflowInfo = ({ template }: WorkflowProps) => {
   const { status, name, createdBy, modifiedBy } = template
   const isPublished = status === "Published"
   return (
-    <FeatureCard title={`${name} Info`} className="sticky top-2">
+    <FeatureCard
+      title={`${name} Info`}
+      value="showWorkflowInfo"
+      className="sticky top-2"
+    >
       <div className="flex items-center gap-3">
         <Badge
           data-published={isPublished}

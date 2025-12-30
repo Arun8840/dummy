@@ -104,4 +104,52 @@ export const workflowRouter = createTRPCRouter({
         data: res?.data,
       }
     }),
+
+  removeComponent: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+
+      const res = await clientTrpcApi<WorkflowTemplate>(ctx, {
+        endpoint: `removeWorkflowComponent`,
+        tenant: "workflow/management",
+        method: "POST",
+        data: input,
+      })
+
+      return {
+        status: res?.success,
+        message: res?.message,
+        data: res?.data,
+      }
+    }),
+
+  removeStep: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+
+      const res = await clientTrpcApi<WorkflowTemplate>(ctx, {
+        endpoint: `removeStep`,
+        tenant: "workflow/management",
+        method: "POST",
+        data: input,
+      })
+
+      return {
+        status: res?.success,
+        message: res?.message,
+        data: res?.data,
+      }
+    }),
 })

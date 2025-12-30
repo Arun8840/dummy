@@ -30,7 +30,7 @@ export interface Step {
   componentType: string
   subComponentType: string
   name: string
-  status: string | null
+  status: boolean
   iName: string
   order: number
   createdDate: number
