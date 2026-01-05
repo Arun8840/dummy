@@ -164,7 +164,6 @@ export function ClientTableData({ data }: ClientTemplateDataProps) {
         type="button"
         onClick={open}
         size={"sm"}
-        variant="gradient"
         className="w-full sm:w-auto"
       >
         <Plus /> Create Client

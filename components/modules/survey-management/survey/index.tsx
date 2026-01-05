@@ -5,7 +5,7 @@ import { trpc } from "@/trpc/client"
 import { SurveyTableData } from "./survey-table-data"
 
 export default function SurveyTemplates() {
-  const { isLoading, data: tables } = trpc.survey.templates.useQuery()
+  const { isLoading, data: survey } = trpc.survey.templates.useQuery()
 
   if (isLoading) {
     return (
@@ -15,7 +15,7 @@ export default function SurveyTemplates() {
     )
   }
 
-  const tableItems = tables?.data
+  const surveyItems = survey?.data
 
-  return <SurveyTableData data={tableItems || []} />
+  return <SurveyTableData data={surveyItems || []} />
 }

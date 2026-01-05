@@ -27,10 +27,10 @@ export default function CustomThemeProvider({ children }: ThemeProviderProps) {
     try {
       return (
         (typeof window !== "undefined" && localStorage.getItem("themeColor")) ||
-        "Blue"
+        "Zinc"
       )
     } catch {
-      return "Blue"
+      return "Zinc"
     }
   }
 

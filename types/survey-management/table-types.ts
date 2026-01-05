@@ -6,7 +6,7 @@ export interface TableTemplate {
   buId: string
   version: number
   name: string
-  status: string
+  status: "Draft" | "Published"
   path: string
   createdUserId: string
   createdDate: number

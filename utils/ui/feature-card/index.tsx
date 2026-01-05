@@ -4,25 +4,34 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { cn } from "@/lib/utils"
 import React from "react"
 
 interface FeatureCardProps {
   children: React.ReactNode
   title: string
+  className?: string
+  value?: string
 }
-export const FeatureCard = ({ children, title }: FeatureCardProps) => {
+const baseClass = "w-full border rounded-lg bg-card"
+export const FeatureCard = ({
+  children,
+  title,
+  className,
+  value = "Item",
+}: FeatureCardProps) => {
   return (
     <Accordion
       type="single"
       collapsible
-      defaultValue="item-1"
-      className="w-full border rounded-lg bg-card"
+      defaultValue={value}
+      className={cn(baseClass, className)}
     >
-      <AccordionItem value="item-1">
+      <AccordionItem value={value}>
         <AccordionTrigger className="rounded-none px-3">
           {title}
         </AccordionTrigger>
-        <AccordionContent className="flex flex-col gap-4 text-balance px-4 font-sans">
+        <AccordionContent className="flex flex-col gap-4 text-balance p-3 font-sans">
           {children}
         </AccordionContent>
       </AccordionItem>
