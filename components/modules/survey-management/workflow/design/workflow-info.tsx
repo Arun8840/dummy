@@ -12,14 +12,10 @@ export const WorkflowInfo = ({ template }: WorkflowProps) => {
     <FeatureCard
       title={`${name} Info`}
       value="showWorkflowInfo"
-      className="sticky top-2"
+      className="flex flex-col"
     >
       <div className="flex items-center gap-3">
-        <Badge
-          data-published={isPublished}
-          variant="secondary"
-          className="flex items-center gap-1 data-[published=true]:bg-blue-500 data-[published=true]:text-white dark:data-[published=true]:bg-blue-600 dark:text-white"
-        >
+        <Badge data-published={isPublished}>
           <BadgeCheckIcon size={16} />
           {status}
         </Badge>

@@ -1,7 +1,12 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { BadgeCheckIcon, MoreHorizontal, Plus } from "lucide-react"
+import {
+  ArrowUpRight,
+  BadgeCheckIcon,
+  MoreHorizontal,
+  Plus,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,19 +18,24 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { DataTable } from "@/utils/ui/data-table/table-component"
-import {
-  TableTemplate,
-  TableTemplateResponse,
-} from "@/types/survey-management/table-types"
+
 import { getDate } from "@/utils/functions/helpers"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
+import { ModalDrawer } from "@/utils/ui/modal-drawer"
+import { CreateSurveyForm } from "./modal-form/create-survey-form"
+import { useGetModalState } from "@/hooks/use-modal-state"
+import {
+  SurveyResponse,
+  SurveyType,
+} from "@/types/survey-management/survey-types"
 
-interface TableTemplateDataProps {
-  data: TableTemplateResponse
+interface SurveyTemplateDataProps {
+  data: SurveyResponse
 }
 
-// Correct columns for workflow templates (field names and accessorKeys)
-export const columns: ColumnDef<TableTemplate>[] = [
+// Correct columns for survey templates (field names and accessorKeys)
+export const columns: ColumnDef<SurveyType>[] = [
   {
     accessorKey: "name",
     header: "Survey Name",
@@ -100,12 +110,11 @@ export const columns: ColumnDef<TableTemplate>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() =>
-                template.id && navigator.clipboard.writeText(template.id)
-              }
-            >
-              View details
+            <DropdownMenuItem asChild>
+              <Link href={`/surveyDesign/${template?.id}`}>
+                <ArrowUpRight />
+                Open {template?.name}
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive">Remove</DropdownMenuItem>
@@ -116,21 +125,24 @@ export const columns: ColumnDef<TableTemplate>[] = [
   },
 ]
 
-const createAction = () => {
-  return (
-    <Button
-      onClick={() => alert("called")}
-      variant="default"
-      className="w-full"
-    >
-      <Plus /> Create
-    </Button>
-  )
-}
+export function SurveyTableData({ data }: SurveyTemplateDataProps) {
+  // *HOOKS
+  const { open, isOpen, setIsOpen } = useGetModalState({
+    value: "create-survey",
+  })
 
-export function SurveyTableData({ data }: TableTemplateDataProps) {
+  const createAction = () => {
+    return (
+      <Button onClick={open}>
+        <Plus /> Create Survey
+      </Button>
+    )
+  }
   return (
     <div className="w-full">
+      <ModalDrawer title="Create Survey" open={isOpen} setOpen={setIsOpen}>
+        <CreateSurveyForm />
+      </ModalDrawer>
       <DataTable
         createAction={createAction}
         columns={columns}

@@ -1,6 +1,7 @@
 import { clientTrpcApi } from "@/lib/apis/trpc-client"
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init"
 import {
+  FlowComponentsResponse,
   WorkflowTemplate,
   WorkflowTemplateResponse,
 } from "@/types/survey-management/workflow-types"
@@ -52,7 +53,7 @@ export const workflowRouter = createTRPCRouter({
       })
 
       return {
-        status: res?.success,
+        status: res?.status,
         message: res?.message,
         data: res?.data,
       }
@@ -67,7 +68,7 @@ export const workflowRouter = createTRPCRouter({
       })
     }
 
-    const res = await clientTrpcApi<WorkflowTemplate>(ctx, {
+    const res = await clientTrpcApi<FlowComponentsResponse>(ctx, {
       endpoint: `loadWorkflowComponents`,
       tenant: "workflow/management",
       method: "GET",
@@ -141,6 +142,30 @@ export const workflowRouter = createTRPCRouter({
 
       const res = await clientTrpcApi<WorkflowTemplate>(ctx, {
         endpoint: `removeStep`,
+        tenant: "workflow/management",
+        method: "POST",
+        data: input,
+      })
+
+      return {
+        status: res?.success,
+        message: res?.message,
+        data: res?.data,
+      }
+    }),
+
+  updateStep: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+
+      const res = await clientTrpcApi<WorkflowTemplate>(ctx, {
+        endpoint: `saveWorkflowTemplate`,
         tenant: "workflow/management",
         method: "POST",
         data: input,
