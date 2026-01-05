@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpRight, MoreHorizontal } from "lucide-react"
+import { ArrowUpRight, MoreHorizontal, Star } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -19,6 +19,7 @@ import {
 import { DataTable } from "@/utils/ui/data-table/table-component"
 import { getDate } from "@/utils/functions/helpers"
 import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
 
 interface WorkflowTableProps {
   data: WorkflowTemplateResponse
@@ -34,9 +35,18 @@ export const columns: ColumnDef<WorkflowTemplate>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
+    cell: ({ row }) => {
+      const status = row?.original.status
+      const isPublished = status === "Published"
+      return (
+        <div className="capitalize">
+          <Badge variant={isPublished ? "default" : "outline"}>
+            {isPublished && <Star fill="currentColor" />}
+            {status}
+          </Badge>
+        </div>
+      )
+    },
   },
   {
     accessorKey: "createdBy",
@@ -60,6 +70,11 @@ export const columns: ColumnDef<WorkflowTemplate>[] = [
     header: () => <div className="text-left">Action</div>,
     cell: ({ row }) => {
       const template = row.original
+      const status = template?.status
+      const isPublished = status === "Published"
+      const fullLink = isPublished
+        ? `/workflow/${template?.id}/preview`
+        : `/workflow/${template?.id}`
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -70,13 +85,19 @@ export const columns: ColumnDef<WorkflowTemplate>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/workflow/${template?.id}`}>
+              <Link href={fullLink}>
                 <ArrowUpRight />
-                Open {template?.name}
+                {isPublished ? "View" : "Design"} {template?.name}
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">Remove</DropdownMenuItem>
+            {!isPublished && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive">
+                  Remove
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       )

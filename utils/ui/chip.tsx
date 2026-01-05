@@ -25,9 +25,11 @@ export const Chip: React.FC<ChipProps> = ({
       className={cn(baseClass, className)}
     >
       <span>{label}</span>
-      <div onClick={onRemove}>
-        <X />
-      </div>
+      {!disabled && (
+        <div onClick={onRemove}>
+          <X />
+        </div>
+      )}
     </Button>
   )
 }

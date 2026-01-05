@@ -1,6 +1,5 @@
 import { ToolMenuType } from "@/types/dashboard-types"
 import * as Icons from "lucide-react"
-import { keyof } from "zod"
 
 const menuData: Record<string, ToolMenuType[]> = {
   "/client": [
@@ -59,6 +58,33 @@ const menuData: Record<string, ToolMenuType[]> = {
       icon: Icons.ShieldHalfIcon,
     },
   ],
+  "/surveyDesign": [
+    {
+      title: "Design",
+      url: "/table",
+      icon: Icons.Pen,
+    },
+    {
+      title: "Preview",
+      url: "id/preview",
+      icon: Icons.Eye,
+    },
+    {
+      title: "settings",
+      url: "/settings",
+      icon: Icons.Settings,
+    },
+    {
+      title: "Publish",
+      url: "/publish",
+      icon: Icons.Send,
+    },
+    {
+      title: "Security",
+      url: "/security",
+      icon: Icons.ShieldHalfIcon,
+    },
+  ],
 }
 
 export const toolMenu = (currentPath: string): ToolMenuType[] => {
@@ -74,11 +100,15 @@ export const toolMenu = (currentPath: string): ToolMenuType[] => {
   // Check for path like /clients/:clientId/ou and match to /client/ou menu data
   const clientsOuRegex = /^\/clients\/[^\/]+\/ou/
   const tableRegex = /^\/table\/[^\/]+/
+  const surveyRegex = /^\/surveyDesign\/[^\/]+/
   if (clientsOuRegex.test(currentPath)) {
     return [...menuData["/client/ou"], backItem]
   }
   if (tableRegex.test(currentPath)) {
     return [...menuData["/table"], backItem]
+  }
+  if (surveyRegex.test(currentPath)) {
+    return [...menuData["/surveyDesign"], backItem]
   }
   return [backItem]
 }
