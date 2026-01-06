@@ -26,7 +26,7 @@ export const Chip: React.FC<ChipProps> = ({
     >
       <span>{label}</span>
       {!disabled && (
-        <div onClick={onRemove}>
+        <div onClick={onRemove} className="hover:text-primary transition-colors">
           <X />
         </div>
       )}

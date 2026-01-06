@@ -40,7 +40,9 @@ export const columns: ColumnDef<WorkflowTemplate>[] = [
       const isPublished = status === "Published"
       return (
         <div className="capitalize">
-          <Badge variant={isPublished ? "default" : "outline"}>
+          <Badge data-published={isPublished}
+            variant={isPublished ? "secondary" : "outline"}
+            className="data-[published=true]:text-primary  data-[published=true]:fill-primary">
             {isPublished && <Star fill="currentColor" />}
             {status}
           </Badge>

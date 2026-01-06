@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpRight, MoreHorizontal, Plus, Trash } from "lucide-react"
+import { ArrowUpRight, MoreHorizontal, Plus, Star, Trash } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -25,6 +25,7 @@ import { toast } from "sonner"
 import { ModalDrawer } from "@/utils/ui/modal-drawer"
 import { useGetModalState } from "@/hooks/use-modal-state"
 import { CreateTableForm } from "./module-forms/create-table-form"
+import { Badge } from "@/components/ui/badge"
 
 interface TableTemplateDataProps {
   data: TableTemplateResponse
@@ -80,9 +81,20 @@ export function TableTemplateData({ data }: TableTemplateDataProps) {
     {
       accessorKey: "status",
       header: "Status",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("status")}</div>
-      ),
+      cell: ({ row }) => {
+        const status = row?.original.status
+        const isPublished = status === "Published"
+        return (
+          <div className="capitalize">
+            <Badge data-published={isPublished}
+              variant={isPublished ? "secondary" : "outline"}
+              className="data-[published=true]:text-primary  data-[published=true]:fill-primary">
+              {isPublished && <Star fill="currentColor" />}
+              {status}
+            </Badge>
+          </div>
+        )
+      },
     },
     {
       accessorKey: "createdBy",
