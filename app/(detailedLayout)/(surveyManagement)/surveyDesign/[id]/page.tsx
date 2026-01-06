@@ -1,6 +1,6 @@
+import { Design } from "@/components/modules/survey-management/survey/design"
 import { trpc } from "@/trpc/server"
 import { Warning } from "@/utils/ui/warning"
-import React from "react"
 
 interface DesignProps {
   params: {
@@ -9,7 +9,7 @@ interface DesignProps {
 }
 export default async function design({ params }: DesignProps) {
   const { id } = await params
-  const table = await trpc.survey.template({ templateId: id })
+  const template = await trpc.survey.template({ templateId: id })
   if (!id) {
     return (
       <Warning
@@ -19,7 +19,5 @@ export default async function design({ params }: DesignProps) {
       />
     )
   }
-
-  console.log(table)
-  return <div>design</div>
+  return <Design template={template?.data} />
 }

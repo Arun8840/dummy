@@ -61,18 +61,13 @@ const menuData: Record<string, ToolMenuType[]> = {
   "/surveyDesign": [
     {
       title: "Design",
-      url: "/table",
+      url: "/",
       icon: Icons.Pen,
     },
     {
       title: "Preview",
       url: "id/preview",
       icon: Icons.Eye,
-    },
-    {
-      title: "settings",
-      url: "/settings",
-      icon: Icons.Settings,
     },
     {
       title: "Publish",
@@ -83,6 +78,11 @@ const menuData: Record<string, ToolMenuType[]> = {
       title: "Security",
       url: "/security",
       icon: Icons.ShieldHalfIcon,
+    },
+    {
+      title: "settings",
+      url: "/settings",
+      icon: Icons.Settings,
     },
   ],
 }

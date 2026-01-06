@@ -8,6 +8,7 @@ import { useState } from "react"
 import superjson from "superjson"
 import { AppRouter } from "./routers"
 import { makeQueryClient } from "./query-client"
+import { signOut } from "next-auth/react"
 
 export const authTrpc = createTRPCReact<AppRouter>()
 let clientQueryClientSingleton: QueryClient
@@ -39,6 +40,14 @@ export function TRPCAuthProvider({ children }: { children: React.ReactNode }) {
         httpBatchLink({
           transformer: superjson,
           url: getUrl(),
+          async fetch(input, init) {
+            const res = await fetch(input, init)
+
+            if (res?.status === 401) {
+              await signOut({ redirectTo: "/auth/login" })
+            }
+            return res
+          },
         }),
       ],
     })
