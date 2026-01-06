@@ -6,6 +6,7 @@ import {
   BadgeCheckIcon,
   MoreHorizontal,
   Plus,
+  Star,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -45,17 +46,17 @@ export const columns: ColumnDef<SurveyType>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const value = row.getValue("status") as "Draft" | "Published"
-      const isPublished = value === "Published"
+      const status = row?.original.status
+      const isPublished = status === "Published"
       return (
-        <Badge
-          data-published={isPublished}
-          variant="secondary"
-          className=" data-[published=true]:bg-blue-500 data-[published=true]:text-white dark:data-[published=true]:bg-blue-600 dark:text-white"
-        >
-          <BadgeCheckIcon />
-          {value}
-        </Badge>
+        <div className="capitalize">
+          <Badge data-published={isPublished}
+            variant={isPublished ? "secondary" : "outline"}
+            className="data-[published=true]:text-primary  data-[published=true]:fill-primary">
+            {isPublished && <Star fill="currentColor" />}
+            {status}
+          </Badge>
+        </div>
       )
     },
   },
