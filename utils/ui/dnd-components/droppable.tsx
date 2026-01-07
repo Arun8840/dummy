@@ -5,7 +5,7 @@ import React, { ReactNode } from "react"
 
 interface DroppableProps {
   id: string
-  type?: string
+  type?: string | string[]
   children: ReactNode
   className?: string
   dropData?: Record<string, string>
@@ -19,16 +19,25 @@ const Droppable = ({
   dropData,
 }: DroppableProps) => {
   const { active } = useDndContext()
+
+  const isTypeMatch = () => {
+    if (!type || !active?.data?.current?.type) return true
+    const activeType = active.data.current.type
+    if (Array.isArray(type)) {
+      return type.includes(activeType)
+    }
+    return activeType === type
+  }
   const { isOver, setNodeRef } = useDroppable({
     id,
     data: { type, ...dropData },
-    disabled: type ? active?.data?.current?.type !== type : false,
+    disabled: type ? !isTypeMatch() : false,
   })
 
-  const isValidDrop = type ? active?.data?.current?.type === type : true
+  const isValidDrop = isTypeMatch()
 
   const baseClass = cn(
-    "p-3 min-h-36 rounded-lg transition-colors",
+    "p-3 min-h-36 rounded-xl transition-colors",
     isValidDrop &&
       (isOver
         ? "bg-primary/20 ring-2 ring-primary pointer-events-auto"

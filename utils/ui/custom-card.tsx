@@ -14,7 +14,7 @@ interface CustomCardTypes extends HTMLAttributes<HTMLDivElement> {
   CardAction?: React.ReactNode
 }
 
-const baseClass = "p-2 shadow-none gap-2"
+const baseClass = "p-2 shadow-none gap-1"
 export const CustomCard: React.FC<CustomCardTypes> = ({
   title,
   description,

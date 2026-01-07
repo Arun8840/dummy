@@ -51,3 +51,26 @@ export interface RoleWithPermissions {
   roleName: string
   permissions: PermissionType[]
 }
+
+// * drag item types
+export interface DragOptions {
+  name: string
+  pull: string
+  put: boolean
+}
+
+export interface DragItem {
+  id: string
+  containerId: string | null
+  templateId: string | null
+  name: string
+  componentType: string
+  subComponentType: string
+}
+
+export interface DragComponentTypes {
+  id: string
+  name: string
+  dragOptions: DragOptions
+  items: DragItem[]
+}

@@ -98,26 +98,6 @@ export interface Branch {
   [key: string]: any
 }
 
-export interface FlowComponentItem {
-  id: string
-  containerId: string | null
-  templateId: string | null
-  name: string
-  componentType: string
-  subComponentType: string
-}
-
-export interface FlowComponents {
-  id: string
-  name: string
-  dragOptions: {
-    name: string
-    pull: string
-    put: boolean
-  }
-  items: FlowComponentItem[]
-}
-
 export interface Columns {
   key: string
   value: string
@@ -125,4 +105,3 @@ export interface Columns {
 }
 
 export type WorkflowTemplateResponse = WorkflowTemplate[]
-export type FlowComponentsResponse = FlowComponents[]

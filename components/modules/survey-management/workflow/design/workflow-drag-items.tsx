@@ -1,10 +1,5 @@
 "use client"
-import { FeatureCard } from "@/utils/ui/feature-card"
-import {
-  FlowComponentItem,
-  FlowComponents,
-  FlowComponentsResponse,
-} from "@/types/survey-management/workflow-types"
+
 import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,9 +11,10 @@ import { ChevronsUpDown } from "lucide-react"
 import Draggable from "@/utils/ui/dnd-components/draggable"
 import { CustomCard } from "@/utils/ui/custom-card"
 import { DragOverlay } from "@dnd-kit/core"
+import { DragComponentTypes, DragItem } from "@/types"
 
 interface WorkflowDragItemsProps {
-  components: FlowComponentsResponse
+  components: DragComponentTypes[]
 }
 
 export const WorkflowDragItems: React.FC<WorkflowDragItemsProps> = ({
@@ -27,7 +23,7 @@ export const WorkflowDragItems: React.FC<WorkflowDragItemsProps> = ({
   const [openIdx, setOpenIdx] = useState<number | null>(null)
 
   // ! create group
-  const CreateGroup: React.FC<{ group: FlowComponents; idx: number }> = ({
+  const CreateGroup: React.FC<{ group: DragComponentTypes; idx: number }> = ({
     group,
     idx,
   }) => {
@@ -62,7 +58,7 @@ export const WorkflowDragItems: React.FC<WorkflowDragItemsProps> = ({
 
   // ! create drag item
   const CreateDragItem: React.FC<{
-    item: FlowComponentItem[]
+    item: DragItem[]
     accept: string
   }> = ({ item, accept }) => {
     return item?.map((comp) => (
