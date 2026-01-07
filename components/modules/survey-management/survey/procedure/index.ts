@@ -8,6 +8,7 @@ import {
   SurveyResponse,
   SurveyType,
 } from "@/types/survey-management/survey-types"
+import { DragComponentTypes } from "@/types"
 
 export const surveyRouter = createTRPCRouter({
   templates: protectedProcedure.query(async ({ ctx }) => {
@@ -119,4 +120,26 @@ export const surveyRouter = createTRPCRouter({
         method: "POST",
       })
     }),
+
+  // * DESIGN RELATED PROCEDURES
+  questions: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.access_token) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "User is not authenticated.",
+      })
+    }
+
+    const res = await clientTrpcApi<DragComponentTypes>(ctx, {
+      endpoint: "load-survey-component-groups",
+      tenant: "survey/management",
+      method: "GET",
+    })
+
+    return {
+      status: res?.status,
+      data: res?.data,
+      message: res?.message,
+    }
+  }),
 })

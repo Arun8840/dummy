@@ -12,12 +12,10 @@ import { Plus } from "lucide-react"
 
 //* Feature/module imports
 import { WorkflowFormProvider } from "./workflow-provider"
-import { WorkflowInfo } from "./workflow-info"
 import { WorkflowDragItems } from "./workflow-drag-items"
 
 //* Types and API imports
 import {
-  FlowComponentItem,
   Step as StepType,
   WorkflowTemplate,
 } from "@/types/survey-management/workflow-types"
@@ -28,6 +26,7 @@ import { useWorkflowStore } from "@/lib/stores/survey-management/workflow"
 import { DndContext, DragEndEvent, DragOverlay } from "@dnd-kit/core"
 import Droppable from "@/utils/ui/dnd-components/droppable"
 import { Step } from "../ui/step"
+import { DragItem } from "@/types"
 
 export interface WorkflowProps {
   template: WorkflowTemplate
@@ -146,7 +145,7 @@ export default function Workflow({ template }: WorkflowProps) {
     // Check if the item was actually dropped in a valid droppable area
     if (!event?.over) return
 
-    const dragData = event?.active?.data?.current as FlowComponentItem
+    const dragData = event?.active?.data?.current as DragItem
     const targetData = event?.over?.data?.current
 
     const droppedType = event?.active?.data?.current?.type
