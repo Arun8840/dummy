@@ -1,15 +1,15 @@
 "use client"
-import React, { ReactNode } from "react"
+import { ReactNode } from "react"
 import { useDraggable } from "@dnd-kit/core"
 import { cn } from "@/lib/utils"
-import { FlowComponentItem } from "@/types/survey-management/workflow-types"
+import { DragItem } from "@/types"
 
 interface DraggableProps {
   id: string
   type?: string
   children: ReactNode
   className?: string
-  dragData?: FlowComponentItem
+  dragData?: DragItem
 }
 
 const Draggable = ({
@@ -27,10 +27,10 @@ const Draggable = ({
 
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        opacity: isDragging ? 0.9 : undefined,
-        cursor: "grab",
-      }
+      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      opacity: isDragging ? 0.9 : undefined,
+      cursor: "grab",
+    }
     : undefined
 
   return (

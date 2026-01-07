@@ -7,6 +7,8 @@ type ThemeColors =
   | "Zinc"
   | "Orange"
   | "Pink"
+  | "CandyLand"
+  | "BoldTech"
 
 interface ThemeColorStateParams {
   themeColor: ThemeColors

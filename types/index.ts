@@ -1,3 +1,5 @@
+import { QuestionTypes } from "./survey-management/survey-types"
+
 export interface MenuType {
   id: string
   templateId: string | null
@@ -73,4 +75,9 @@ export interface DragComponentTypes {
   name: string
   dragOptions: DragOptions
   items: DragItem[]
+}
+
+
+export interface DesignQuestionComponentProps {
+  value: QuestionTypes
 }

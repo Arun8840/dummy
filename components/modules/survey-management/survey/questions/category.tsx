@@ -1,34 +1,44 @@
 "use client"
-import { cn } from "@/lib/utils"
 import { QuestionTypes } from "@/types/survey-management/survey-types"
-import { CustomCard } from "@/utils/ui/custom-card"
 import Droppable from "@/utils/ui/dnd-components/droppable"
 import React, { HTMLAttributes } from "react"
+import { MemoizedQuestion } from "../design/memoized-question"
+import { QuestionWrapper } from "../design/question-wrapper"
+import { DesignQuestionComponentProps } from "@/types"
 
-interface CategoryProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
-  value: QuestionTypes
-  questionIdx: number
-}
 
-export const Category: React.FC<CategoryProps> = ({
+export const Category: React.FC<DesignQuestionComponentProps> = ({
   value,
-  questionIdx,
-  className,
 }) => {
+  // * HOOKS
+  const currentChildrenLength = value?.children?.length ?? 0
+  const additionalDropData = {
+    containerId: value?.id,
+    order: String(currentChildrenLength)
+  }
+
+  // ! remove payload
+  const removeRequest = {
+    componentId: value?.id,
+    componentType: value?.componentType,
+    containerId: value?.containerId,
+  }
+
   return (
-    <CustomCard
-      className={cn(className)}
-      title={`${questionIdx + 1}. ${value?.name}`}
-    >
-      {/* //* CATEGORY - QUESTIONS */}
+    <QuestionWrapper question={value}>
       <Droppable
         id={`category-${value?.id}`}
         type={["Category", "Question"]}
-        className="flex-1 h-full min-h-28"
+        className="flex-1 h-full min-h-28 flex flex-col gap-2 p-2"
+        dropData={additionalDropData}
       >
-        hello
+        {
+          value?.children?.length > 0 &&
+          value?.children?.map((comp, compIdx) => {
+            return <MemoizedQuestion key={comp?.id} question={comp} />
+          })
+        }
       </Droppable>
-    </CustomCard>
+    </QuestionWrapper>
   )
 }

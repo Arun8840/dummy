@@ -10,18 +10,21 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Button } from "@/components/ui/button"
-import { ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown, ListTodo, Sparkle, StarHalf, VectorSquare } from "lucide-react"
 import Draggable from "@/utils/ui/dnd-components/draggable"
+import { trpc } from "@/trpc/client"
+import { Warning } from "@/utils/ui/warning"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useSurveyStore } from "@/lib/stores/survey-management/survey"
 
-type DesignDragItemsPropTypes = {
-  components: DragComponentTypes[]
-}
-export const DesignDragItems: React.FC<DesignDragItemsPropTypes> = ({
-  components,
-}) => {
+
+export const DesignDragItems = () => {
   // * HOOKS
+  const { isPending, data, error } = trpc.survey.questions.useQuery()
+  const setComponent = useSurveyStore((state) => state?.setDragItems)
   const [openIdx, setOpenIdx] = useState<number | null>(null)
 
+  const components = data?.data || []
   // ! create group
   const CreateGroup: React.FC<{ group: DragComponentTypes; idx: number }> = ({
     group,
@@ -48,7 +51,7 @@ export const DesignDragItems: React.FC<DesignDragItemsPropTypes> = ({
             </Button>
           </CollapsibleTrigger>
         </div>
-        <CollapsibleContent className="grid grid-cols-2 gap-2">
+        <CollapsibleContent className="grid grid-cols-2 gap-2 pt-1">
           <CreateDragItem item={group?.items || []} />
         </CollapsibleContent>
       </Collapsible>
@@ -61,6 +64,7 @@ export const DesignDragItems: React.FC<DesignDragItemsPropTypes> = ({
   }> = ({ item }) => {
     return item?.map((comp) => {
       const accept = comp?.componentType
+      const isCategory = comp?.componentType === "Category"
       return (
         <Draggable
           key={comp?.id}
@@ -69,15 +73,35 @@ export const DesignDragItems: React.FC<DesignDragItemsPropTypes> = ({
           dragData={comp}
         >
           <Button
-            size={"sm"}
             variant={"secondary"}
-            className="w-full min-h-20 rounded-lg p-2 hover:bg-primary"
+            className="w-full hover:bg-primary flex justify-between"
           >
-            <small className="text-wrap">{comp?.name}</small>
+            {isCategory ? <VectorSquare /> : <ListTodo />}
+            <small className="text-wrap flex-1">{comp?.name}</small>
           </Button>
         </Draggable>
       )
     })
+  }
+
+  if (isPending) {
+    return <Skeleton className="size-full" />
+  }
+
+  if (error) {
+    return (
+      <section className="size-full">
+        <Warning
+          title="Failed to Load Survey Questions"
+          description="An error occurred while fetching the survey design components. Please try again later or contact support if the issue persists."
+          variant="destructive"
+        />
+      </section>
+    )
+  }
+
+  if (!isPending && Array.isArray(components)) {
+    setComponent?.(components)
   }
 
   return (
