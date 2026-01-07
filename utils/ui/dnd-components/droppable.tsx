@@ -39,9 +39,9 @@ const Droppable = ({
   const baseClass = cn(
     "p-3 min-h-36 rounded-xl transition-colors",
     isValidDrop &&
-      (isOver
-        ? "bg-primary/20 ring-2 ring-primary pointer-events-auto"
-        : " ring-2 ring-muted pointer-events-auto")
+    (isOver
+      ? "bg-primary/20 border border-dashed border-primary pointer-events-auto"
+      : "border border-primary/40 border-dashed pointer-events-auto")
   )
 
   return (

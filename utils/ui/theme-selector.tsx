@@ -62,6 +62,16 @@ const availableColors: ThemeOption[] = [
     light: "bg-pink-300",
     dark: "bg-pink-700",
   },
+  {
+    name: "CandyLand",
+    light: "bg-pink-200",
+    dark: "bg-pink-400",
+  },
+  {
+    name: "BoldTech",
+    light: "bg-indigo-200",
+    dark: "bg-indigo-800",
+  },
 ]
 
 const baseClass = "shadow-none"
@@ -86,14 +96,12 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ className }) => {
           <DropdownMenuItem
             key={color.name}
             onSelect={() => setThemeColor(color.name as ThemeColors)}
-            className={`${
-              themeColor === color.name ? "bg-accent" : ""
-            } mb-0.5 last:mb-0`}
+            className={`${themeColor === color.name ? "bg-accent" : ""
+              } mb-0.5 last:mb-0`}
           >
             <span
-              className={`size-3 rounded-full ${
-                theme === "light" ? color.light : color.dark
-              }`}
+              className={`size-3 rounded-full ${theme === "light" ? color.light : color.dark
+                }`}
             />
             <small>{color.name}</small>
           </DropdownMenuItem>

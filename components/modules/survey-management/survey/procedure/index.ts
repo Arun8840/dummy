@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server"
 import z from "zod"
 import { createSurveySchema } from "../schema"
 import {
+  QuestionTypes,
   SurveyResponse,
   SurveyType,
 } from "@/types/survey-management/survey-types"
@@ -130,7 +131,7 @@ export const surveyRouter = createTRPCRouter({
       })
     }
 
-    const res = await clientTrpcApi<DragComponentTypes>(ctx, {
+    const res = await clientTrpcApi<DragComponentTypes[]>(ctx, {
       endpoint: "load-survey-component-groups",
       tenant: "survey/management",
       method: "GET",
@@ -142,4 +143,75 @@ export const surveyRouter = createTRPCRouter({
       message: res?.message,
     }
   }),
+
+
+  addQuestion: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+      const request = input
+      const res = await clientTrpcApi<QuestionTypes>(ctx, {
+        endpoint: "create-component",
+        tenant: "survey/management",
+        method: "POST",
+        data: { ...request }
+      })
+
+      return {
+        status: res?.status,
+        data: res?.data,
+        message: res?.message,
+      }
+    }),
+  removeQuestion: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+      const request = input
+      const res = await clientTrpcApi<SurveyType>(ctx, {
+        endpoint: "remove-component",
+        tenant: "survey/management",
+        method: "POST",
+        data: { ...request }
+      })
+
+      return {
+        status: res?.status,
+        data: res?.data,
+        message: res?.message,
+      }
+    }),
+
+  copyQuestion: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+
+      const res = await clientTrpcApi(ctx, {
+        endpoint: "copy-component",
+        tenant: "survey/management",
+        method: "POST",
+      })
+
+      return {
+        status: res?.status,
+        data: res?.data,
+        message: res?.message,
+      }
+    }),
 })

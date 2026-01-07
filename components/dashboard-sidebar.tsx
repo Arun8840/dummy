@@ -86,7 +86,7 @@ export function DashboardSidebar({
               <SidebarMenu>
                 {menuItems.map((group) => (
                   <SidebarMenuItem key={`group_${group.id}`}>
-                    <SidebarMenuButton className="font-medium">
+                    <SidebarMenuButton className="font-medium text-primary">
                       {group.name}
                     </SidebarMenuButton>
                     {group.menus?.length ? (
@@ -99,11 +99,10 @@ export function DashboardSidebar({
                               key={`menu_${itemIndex}-${item?.id}`}
                             >
                               <SidebarMenuSubButton asChild isActive={isActive}>
-                                <Link href={linkStr}>
+                                <Link href={linkStr} className={`${isActive ? "!text-primary" : "!text-muted-foreground"}`}>
                                   <Icon
                                     name={item?.iconName ?? "Settings"}
-                                    className={`p-[.1px] `}
-                                    color={isActive ? "#EA580C" : "#D1D5DB"}
+                                    className={`p-[.1px] ${isActive && "stroke-primary"}`}
                                   />
                                   {item?.name}
                                 </Link>
@@ -134,7 +133,7 @@ export const Icon: React.FC<IconProps> = ({ name, className, color }) => {
 
   if (!IconComponent) {
     // Fallback to a default icon if not found
-    return <Icons.Server className={className} color={color} />
+    return <Icons.Asterisk className={className} color={color} />
   }
 
   return <IconComponent className={className} color={color} />

@@ -197,4 +197,13 @@ export interface SurveyType {
   variableNamesMap: VariableMapType
 }
 
+
+
+export type RemoveQuestionRequestTypes = {
+  componentId: string;
+  componentType: string;
+  containerId: string;
+  templateId?: string;
+}
+
 export type SurveyResponse = SurveyType[]
