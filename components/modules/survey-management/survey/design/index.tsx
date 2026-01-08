@@ -31,8 +31,9 @@ export function Design({ template }: DesignComponentProps) {
 
   const addComponent = trpc.survey.addQuestion.useMutation()
   const removeComponent = trpc.survey.removeQuestion.useMutation()
+  const saveComponent = trpc.survey.saveQuestion.useMutation()
 
-  const isPending = addComponent?.isPending || removeComponent?.isPending
+  const isPending = addComponent?.isPending || removeComponent?.isPending || saveComponent?.isPending
 
   // Only setTemplate if it's a different id (and with every initial mount)
   if (template && template.id && lastTemplateId.current !== template.id) {
@@ -90,9 +91,33 @@ export function Design({ template }: DesignComponentProps) {
       },
     })
   }
+
+  const save = (arg: QuestionTypes) => {
+    const request = {
+      componentId: arg?.id,
+      containerId: arg?.containerId,
+      templateId: template?.id,
+      componentType: arg?.componentType,
+      subComponentType: arg?.subComponentType,
+      component: arg
+    }
+    saveComponent.mutate(request, {
+      onSuccess(data) {
+        toast.success(data?.message, {
+          position: "top-center",
+        })
+      },
+      onError(error) {
+        toast.error(error?.message, {
+          position: "top-center",
+        })
+      },
+    })
+  }
   const contextValues = {
     templateId: template?.id as string,
     remove: remove,
+    save: save,
     isPending: isPending,
   }
   return (

@@ -5,6 +5,7 @@ import React, { createContext, useContext } from "react"
 type SurveyContextType = {
     templateId: string
     remove?: (arg: RemoveQuestionRequestTypes) => void
+    save: (arg: QuestionTypes) => void
     isPending?: boolean
 }
 

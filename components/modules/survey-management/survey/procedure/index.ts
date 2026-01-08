@@ -9,7 +9,7 @@ import {
   SurveyResponse,
   SurveyType,
 } from "@/types/survey-management/survey-types"
-import { DragComponentTypes } from "@/types"
+import { DragComponentTypes, TextboxTypes } from "@/types"
 
 export const surveyRouter = createTRPCRouter({
   templates: protectedProcedure.query(async ({ ctx }) => {
@@ -214,4 +214,46 @@ export const surveyRouter = createTRPCRouter({
         message: res?.message,
       }
     }),
+
+  saveQuestion: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+
+
+      const res = await clientTrpcApi(ctx, {
+        endpoint: "save-component",
+        tenant: "survey/management",
+        method: "POST",
+        data: { ...input }
+      })
+
+      return {
+        status: res?.status,
+        data: res?.data,
+        message: res?.message,
+      }
+    }),
+
+
+  // * common service calls for question properties
+  getTextboxTypes: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.access_token) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "User is not authenticated.",
+      })
+    }
+
+    return await clientTrpcApi<TextboxTypes[]>(ctx, {
+      endpoint: "getTextBoxTypes",
+      tenant: "survey/management",
+      method: "GET",
+    })
+  }),
 })
