@@ -26,6 +26,8 @@ export interface Textbox {
   error: boolean
   overrideError: boolean
   scores: any[]
+  label: string
+  variableName: string
   permissionMap: Record<string, any>
 }
 

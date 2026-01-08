@@ -77,6 +77,29 @@ export interface DragComponentTypes {
   items: DragItem[]
 }
 
+export interface TextboxTypes {
+  order: number;
+  typeId: string;
+  type: string;
+  msg: string;
+  answer: string;
+  precision: number;
+  override: boolean;
+  required: boolean;
+  instanceVariable: boolean;
+  skipValue: string;
+  skipCondition: string;
+  skipToQuestion: string;
+  branchToCategory: string;
+  allowScoring: boolean;
+  score: number;
+  maxLength: number;
+  restrictLength: boolean;
+  dynamic: boolean;
+  error: boolean;
+  overrideError: boolean;
+}
+
 
 export interface DesignQuestionComponentProps {
   value: QuestionTypes
