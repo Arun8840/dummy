@@ -1,11 +1,15 @@
 "use client"
 import { useRef } from "react"
-import { QuestionTypes, RemoveQuestionRequestTypes, SurveyType } from "@/types/survey-management/survey-types"
+import {
+  QuestionTypes,
+  RemoveQuestionRequestTypes,
+  SurveyType,
+} from "@/types/survey-management/survey-types"
 import { SurveyQuestions } from "./survey-questions"
 import { useSurveyStore } from "@/lib/stores/survey-management/survey"
 import { DragItem } from "@/types"
 import { DndContext, DragEndEvent } from "@dnd-kit/core"
-import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { restrictToWindowEdges } from "@dnd-kit/modifiers"
 import { DesignItems } from "./design-items"
 import { trpc } from "@/trpc/client"
 import { toast } from "sonner"
@@ -18,9 +22,7 @@ interface DesignComponentProps {
   template: SurveyType
 }
 
-
 export function Design({ template }: DesignComponentProps) {
-
   // * HOOKS
   const lastTemplateId = useRef<string | null>(null)
   const setTemplate = useSurveyStore((state) => state?.setTemplate)
@@ -46,14 +48,14 @@ export function Design({ template }: DesignComponentProps) {
     const dragData = event?.active?.data?.current as DragItem
     const targetData = event?.over?.data?.current
 
-    const newOrder = Number(targetData?.order ?? 0);
+    const newOrder = Number(targetData?.order ?? 0)
     const request = {
       templateId: template?.id,
       containerId: targetData?.containerId,
       newIndex: newOrder,
       componentType: dragData?.componentType,
       subComponentType: dragData?.subComponentType,
-    };
+    }
 
     addComponent.mutate(request, {
       onSuccess(data) {
@@ -62,7 +64,7 @@ export function Design({ template }: DesignComponentProps) {
       },
       onError(error) {
         toast.error(error?.message, {
-          position: "top-center"
+          position: "top-center",
         })
       },
     })
@@ -72,18 +74,18 @@ export function Design({ template }: DesignComponentProps) {
   const remove = (arg: RemoveQuestionRequestTypes) => {
     const request = {
       templateId: template?.id as string,
-      ...arg
+      ...arg,
     }
     removeComponent.mutate(request, {
       onSuccess(data) {
         toast.success(data?.message, {
-          position: "top-center"
+          position: "top-center",
         })
         removeQuestion?.(request)
       },
       onError(error) {
         toast.error(error?.message, {
-          position: "top-center"
+          position: "top-center",
         })
       },
     })
@@ -95,12 +97,10 @@ export function Design({ template }: DesignComponentProps) {
   }
   return (
     <DndContext onDragEnd={handleDrop} modifiers={[restrictToWindowEdges]}>
-
       <SurveyProvider value={contextValues}>
         <section className="size-full grid grid-cols-1 sm:grid-cols-[300px_1fr] gap-2 relative">
           <DesignItems />
           <SurveyQuestions />
-          <SurveyQuestionEditor />
         </section>
       </SurveyProvider>
     </DndContext>
