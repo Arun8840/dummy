@@ -4,8 +4,7 @@ import Droppable from "@/utils/ui/dnd-components/droppable"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Warning } from "@/utils/ui/warning"
 import { MemoizedQuestion } from "./memoized-question"
-import { ModalDrawer } from "@/utils/ui/modal-drawer"
-import { TextboxEdit } from "../questions/textBox/textBox-edit"
+import { SurveyQuestionEditor } from "./survey-question-editor"
 
 export const SurveyQuestions = () => {
   const template = useSurveyStore((state) => state?.surveyTemplate)
@@ -14,7 +13,7 @@ export const SurveyQuestions = () => {
   const currentChildrenLength = template?.children?.length ?? 0
   const additionalDropData = {
     containerId: template?.id as string,
-    order: String(currentChildrenLength)
+    order: String(currentChildrenLength),
   }
 
   return (
@@ -46,7 +45,7 @@ export const SurveyQuestions = () => {
         </CardContent>
       </Card>
 
-
+      <SurveyQuestionEditor />
     </>
   )
 }
