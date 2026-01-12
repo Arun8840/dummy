@@ -26,21 +26,23 @@ export const CustomCard: React.FC<CustomCardTypes> = ({
   return (
     <Card className={cn(baseClass, className)}>
       {(title || description) && (
-        <CardHeader className="p-0">
+        <CardHeader className="p-1 gap-y-0">
           <div className="flex items-center justify-between">
             {title && (
-              <CardTitle className="p-2 font-medium">{title}</CardTitle>
+              <CardTitle className="p-1 font-medium">{title}</CardTitle>
             )}
             {CardAction}
           </div>
           {description && (
-            <CardDescription className="text-xs px-1">
+            <CardDescription className="text-xs p-1">
               {description}
             </CardDescription>
           )}
         </CardHeader>
       )}
-      <CardContent className="p-1 flex flex-col gap-1">{children}</CardContent>
+      <CardContent className="p-1.5 flex flex-col gap-1">
+        {children}
+      </CardContent>
     </Card>
   )
 }

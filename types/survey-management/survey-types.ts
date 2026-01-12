@@ -12,6 +12,8 @@ export interface Textbox {
   precision: number
   code: string
   override: boolean
+  overrideAnswer: string
+  overrideReason: string
   required: boolean
   instanceVariable: boolean
   skipValue: string
@@ -188,6 +190,7 @@ export interface QuestionTypes {
   showIcon: boolean
   showIconWithLabel: boolean
   textBox: Textbox
+  multipleTextBox: Textbox[]
   children: QuestionTypes[]
 }
 
@@ -225,6 +228,14 @@ export interface SurveyType {
   variableNamesMap: VariableMapType
 }
 
+export type SaveQuestionRequestType = {
+  componentId: string
+  containerId: string
+  templateId: string
+  componentType: string
+  subComponentType: string
+  component: QuestionTypes
+}
 export type RemoveQuestionRequestTypes = {
   componentId: string
   componentType: string
@@ -233,3 +244,126 @@ export type RemoveQuestionRequestTypes = {
 }
 
 export type SurveyResponse = SurveyType[]
+
+//* SETTINGS
+export interface SurveySettingsTypes {
+  whiteLabel: boolean
+  headerColor: string | null
+  headerFontColor: string | null
+  logoPosition: number
+  gridfsId: string | null
+  fileName: string | null
+  fileSize: number
+  surveyLogo: string | null
+  helpGridfsId: string | null
+  helpFileName: string | null
+  helpFileSize: number
+  surveyHelp: boolean
+  requiredMessage: string | null
+  titleColor: string | null
+  descriptionColor: string | null
+  inputControlColor: string | null
+  allowFooter: boolean
+  footerMessage: string | null
+  footerColor: string | null
+  footerFontColor: string | null
+  ribbonColor: string | null
+  ribbonFontColor: string | null
+  sideMenuColor: string | null
+  sideMenuFontColor: string | null
+  maxImagesPerComponent: number
+  maxFileSize: number
+  imageCompressionPercentage: number
+  showQuestionNumber: boolean
+  cardlayout: boolean
+  showSurveyDetails: boolean
+  showUploadPhoto: boolean
+  uploadToCategories: boolean
+  allowDragImagesFromCategories: boolean
+  allowDownloadReportBeforeComplete: boolean
+  allowPunchList: boolean
+  showTags: boolean
+  allowTableMapping: boolean
+  allowUploadImageGallery: boolean
+  labelColorMap: Record<string, any> | null
+  optionSettings: boolean
+  tagTemplateId: string | null
+  zsTableId: string | null
+  vaultTemplateId: string | null
+  workflowTemplateId: string | null
+  preFilledVaultTemplateId: string | null
+  layoutTemplateId: string | null
+  brandingTemplateId: string | null
+  variableTemplateId: string | null
+  reTakeRestriction: boolean
+  reTakeMonthMap: Record<string, number>
+  reTakeMonths: number
+  vaultPermissionMap: Record<string, any> | null
+  editCompletedSurveyPermissionMap: Record<string, any> | null
+  surveyReport: boolean
+  preSurveyReport: boolean
+  surveyScoreReport: boolean
+  surveyAnalysisReport: boolean
+  allowLogic: boolean
+  allowPiping: boolean
+  allowLooping: boolean
+  allowPreviousButton: boolean
+  allowNextButton: boolean
+  previousButtonLabel: string
+  nextButtonLabel: string
+  submitButtonLabel: string
+  allowBackButton: boolean
+  allowSaveButton: boolean
+  backButtonLabel: string
+  saveButtonLabel: string
+  calculateScores: boolean
+  showScores: boolean
+  showSummary: boolean
+  referenceImages: boolean
+  showQuestionAnswerStatus: boolean
+  recordGeoLocation: boolean
+  exportScorePercentage: string
+  roleBasedLogic: boolean
+  allowDefaultValues: boolean
+  allowMatrixCustomization: boolean
+  includeSkippedCategoryInCalculations: boolean
+  exportInprogressSurveys: boolean
+  allowSurveyAttributes: boolean
+  allowFtpSettings: boolean
+  allowFilePattern: boolean
+  allowPostalMail: boolean
+  fileUploadTypes: any | null
+  scoring: boolean
+  weight: boolean
+  variables: boolean
+  answerKey: boolean
+  displaySurveyTitleOnTheFirstPage: boolean
+  noAttachmentsOnTheReport: boolean
+  multilingual: boolean
+  multilingualSelection: boolean
+  allowPublishScheduleLater: boolean
+  allowPublishRecurring: boolean
+  allowPublishOverrideWorkflow: boolean
+  allowPublishOverrideTheme: boolean
+  allowSurveyLayoutSelection: boolean
+  allowPublishMassDeploy: boolean
+  allowDynamicTextField: boolean
+  allowDynamicRow: boolean
+  allowConditionalColumn: boolean
+  allowOfflineSurvey: boolean
+  allowPhotoUpload: boolean
+  allowConditionalRow: boolean
+  allowAttachmentType: boolean
+  allowColumnFormula: boolean
+  allowComment: boolean
+  allowNAOption: boolean
+  allowTexboxMaxCharacterLimit: boolean
+  texboxMaxCharacter: number
+  workflowControlledCategory: boolean
+  workflowControlledUserRole: string | null
+  parallelSurvey: boolean
+  editableDataColumn: boolean
+  surveyNameNotShowInInstance: boolean
+}
+
+export type SurveySettingsResponse = SurveySettingsTypes

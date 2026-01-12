@@ -3,9 +3,6 @@ import { useSurveyStore } from "@/lib/stores/survey-management/survey"
 import { ModalDrawer } from "@/utils/ui/modal-drawer"
 import { questionEditor } from "../questions"
 import { Warning } from "@/utils/ui/warning"
-import { Suspense } from "react"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Spinner } from "@/components/ui/spinner"
 
 export const SurveyQuestionEditor = () => {
   // *HOOKS
@@ -43,14 +40,8 @@ export const SurveyQuestionEditor = () => {
           />
         </div>
       ) : (
-        <Suspense fallback={<PropertieSkeleton />}>
-          <EditableComponent value={question} />
-        </Suspense>
+        <EditableComponent value={question} />
       )}
     </ModalDrawer>
   )
-}
-
-const PropertieSkeleton = () => {
-  return <Skeleton className="h-40" />
 }

@@ -1,8 +1,8 @@
-import { FlowComponentsResponse } from "@/types/survey-management/workflow-types"
+import { DragComponentTypes } from "@/types"
 
 export interface WorkflowStateTypes {
-  components: FlowComponentsResponse
-  setComponents?: (value: FlowComponentsResponse) => void
+  components: DragComponentTypes[]
+  setComponents?: (value: DragComponentTypes[]) => void
 }
 
 export const initailWorkflowState: WorkflowStateTypes = {
