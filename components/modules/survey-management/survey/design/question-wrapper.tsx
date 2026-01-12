@@ -77,6 +77,7 @@ export const QuestionWrapper: React.FC<QuestionWrapperProps> = ({
   return (
     <CustomCard
       title={`${question?.order + 1}. ${displayName}`}
+      description={question?.description}
       CardAction={<QuestionActions />}
       className="shadow"
     >

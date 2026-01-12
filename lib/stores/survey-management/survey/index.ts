@@ -4,6 +4,7 @@ import { initailSurveyState, SurveyStateTypes } from "./initial-state"
 import { DragComponentTypes } from "@/types"
 import {
   QuestionTypes,
+  SaveQuestionRequestType,
   SurveyType,
 } from "@/types/survey-management/survey-types"
 export const useSurveyStore = create<SurveyStateTypes>()(
@@ -90,6 +91,52 @@ export const useSurveyStore = create<SurveyStateTypes>()(
           )
         } else {
           removeFromNodes(template?.children || [])
+        }
+      })
+    },
+
+    saveQuestion: (saveArg: SaveQuestionRequestType) => {
+      const { component, componentId, containerId } = saveArg
+      set((state) => {
+        const template = state?.surveyTemplate
+        if (!template || !Array.isArray(template?.children)) return
+
+        // Helper to update question by id recursively using for...of (simpler and clearer)
+        const updateQuestionById = (nodes: QuestionTypes[]): boolean => {
+          for (const node of nodes) {
+            if (node.id === containerId && Array.isArray(node.children)) {
+              for (const child of node.children) {
+                if (child.id === componentId) {
+                  Object.assign(child, component)
+                  return true
+                }
+              }
+              // Deep search in grandchildren if not found
+              for (const child of node?.children) {
+                if (
+                  Array.isArray(child.children) &&
+                  updateQuestionById(child.children)
+                ) {
+                  return true
+                }
+              }
+            } else if (Array.isArray(node.children)) {
+              if (updateQuestionById(node.children)) return true
+            }
+          }
+          return false
+        }
+
+        // Top-level update
+        if (containerId === template.id) {
+          for (const child of template.children) {
+            if (child.id === componentId) {
+              Object.assign(child, component)
+              return
+            }
+          }
+        } else {
+          updateQuestionById(template.children)
         }
       })
     },

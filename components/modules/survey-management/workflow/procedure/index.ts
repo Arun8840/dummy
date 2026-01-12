@@ -1,7 +1,7 @@
 import { clientTrpcApi } from "@/lib/apis/trpc-client"
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init"
+import { DragComponentTypes } from "@/types"
 import {
-  FlowComponentsResponse,
   WorkflowTemplate,
   WorkflowTemplateResponse,
 } from "@/types/survey-management/workflow-types"
@@ -68,7 +68,7 @@ export const workflowRouter = createTRPCRouter({
       })
     }
 
-    const res = await clientTrpcApi<FlowComponentsResponse>(ctx, {
+    const res = await clientTrpcApi<DragComponentTypes[]>(ctx, {
       endpoint: `loadWorkflowComponents`,
       tenant: "workflow/management",
       method: "GET",

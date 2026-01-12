@@ -6,6 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import { cn } from "@/lib/utils"
 import React from "react"
 
 interface ModalComponentProps {
@@ -15,8 +16,10 @@ interface ModalComponentProps {
   open: boolean
   setOpen: (value: boolean) => void
   direction?: "top" | "bottom" | "left" | "right"
+  className?: string
 }
 
+const baseClass = "max-h-[600px] flex-1 flex flex-col gap-2  overflow-y-auto"
 export const ModalDrawer = ({
   children,
   open,
@@ -24,6 +27,7 @@ export const ModalDrawer = ({
   description,
   setOpen,
   direction = "right",
+  className,
 }: ModalComponentProps) => {
   // * MODAL WRAPPER
 
@@ -31,12 +35,12 @@ export const ModalDrawer = ({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent side={direction}>
         <SheetHeader className="pb-0">
-          <SheetTitle>{title}</SheetTitle>
+          <SheetTitle className="capitalize">{title}</SheetTitle>
           <SheetDescription>
             {description ?? "Fill out the form below to create a new template."}
           </SheetDescription>
         </SheetHeader>
-        <div className="flex-1 flex flex-col gap-2  overflow-y-auto">
+        <div className={cn(baseClass, className)}>
           <div className="size-full  p-3 pt-0">{children}</div>
         </div>
       </SheetContent>

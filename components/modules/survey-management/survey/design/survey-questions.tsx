@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Warning } from "@/utils/ui/warning"
 import { MemoizedQuestion } from "./memoized-question"
 import { SurveyQuestionEditor } from "./survey-question-editor"
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import { CustomCard } from "@/utils/ui/custom-card"
 
 export const SurveyQuestions = () => {
   const template = useSurveyStore((state) => state?.surveyTemplate)
@@ -16,18 +18,20 @@ export const SurveyQuestions = () => {
     order: String(currentChildrenLength),
   }
 
+  const categoryIds = questions.map((cat) => cat?.id).filter(Boolean)
+
   return (
     <>
-      <Card className="p-3 spacey gap-0 shadow-none">
-        <CardHeader className="p-0">
-          <CardTitle>{template?.name}</CardTitle>
-        </CardHeader>
-        <CardContent className="size-full p-0">
-          <Droppable
-            id="survey-questions"
-            type="Category"
-            className="space-y-2 size-full p-2"
-            dropData={additionalDropData}
+      <CustomCard title={template?.name}>
+        <Droppable
+          id="survey-questions"
+          type="Category"
+          className="space-y-2 size-full p-2"
+          dropData={additionalDropData}
+        >
+          <SortableContext
+            items={categoryIds}
+            strategy={verticalListSortingStrategy}
           >
             {/* //* QUESTIONS */}
             {questions.length > 0 ? (
@@ -41,10 +45,9 @@ export const SurveyQuestions = () => {
                 variant="default"
               />
             )}
-          </Droppable>
-        </CardContent>
-      </Card>
-
+          </SortableContext>
+        </Droppable>
+      </CustomCard>
       <SurveyQuestionEditor />
     </>
   )

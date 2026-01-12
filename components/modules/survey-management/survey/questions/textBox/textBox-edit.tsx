@@ -12,7 +12,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import { useSurveyContext } from "@/context/Survey-design-providers"
@@ -22,7 +28,42 @@ import { QuestionTypes } from "@/types/survey-management/survey-types"
 import CheckboxGroup from "@/utils/ui/checkBox-group"
 import { Undo2 } from "lucide-react"
 import React from "react"
-import { SubmitHandler, useForm } from "react-hook-form"
+import {
+  SubmitHandler,
+  useForm,
+  UseFormReturn,
+  FieldPath,
+  FieldValues,
+} from "react-hook-form"
+
+type FieldGroupType<TFieldValues extends FieldValues = FieldValues> = {
+  label: string
+  name: FieldPath<TFieldValues>
+  type?: React.HTMLInputTypeAttribute
+  form: UseFormReturn<TFieldValues>
+}
+
+const FormFieldGroup = <TFieldValues extends FieldValues = FieldValues>({
+  label,
+  name,
+  form,
+  type = "text",
+}: FieldGroupType<TFieldValues>) => {
+  return (
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <Input type={type} {...field} value={field?.value ?? ""} />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+  )
+}
 
 export const TextboxEdit: React.FC<DesignQuestionComponentProps> = ({
   value,
@@ -36,15 +77,19 @@ export const TextboxEdit: React.FC<DesignQuestionComponentProps> = ({
     },
   })
 
+  const isValidOverride = value?.subComponentType === "textBoxOverride"
+  const isOverrided = isValidOverride && form.watch("textBox.override")
   const loading = isLoading
 
   const setType = (typeId: string) => {
     const currentType = form.getValues("textBox")
-    const findType = textboxTypes?.find((existType) => existType?.typeId === typeId)
+    const findType = textboxTypes?.find(
+      (existType) => existType?.typeId === typeId
+    )
     if (!findType) return
     const updated = {
       ...currentType,
-      ...findType
+      ...findType,
     }
     form.setValue(`textBox`, updated)
   }
@@ -67,17 +112,16 @@ export const TextboxEdit: React.FC<DesignQuestionComponentProps> = ({
   }
   const resetValue = () => {
     form.reset({
-      ...value
+      ...value,
     })
   }
   const submitHandle: SubmitHandler<QuestionTypes> = (data) => {
     if (!data) return null
     save?.(data)
-
   }
   if (loading) {
     return (
-      <div className="h-40 grid place-items-center font-sans">
+      <div className="h-52 grid place-items-center font-sans">
         <Badge variant={"outline"}>
           <Spinner /> Preparing ...
         </Badge>
@@ -91,7 +135,6 @@ export const TextboxEdit: React.FC<DesignQuestionComponentProps> = ({
         className="flex flex-col gap-2 size-full pt-1 font-sans"
       >
         <div className="flex-1 grid gap-4 auto-rows-max">
-
           <div className="flex  items-center gap-2">
             <CheckboxGroup
               id={`required_${value?.id}`}
@@ -117,6 +160,14 @@ export const TextboxEdit: React.FC<DesignQuestionComponentProps> = ({
               defaultChecked={!!value?.required}
               onCheckedChange={(e) => form.setValue("required", e)}
             />
+            {isValidOverride && (
+              <CheckboxGroup
+                id={`override_${value?.id}`}
+                label="Override"
+                defaultChecked={!!value?.textBox?.override}
+                onCheckedChange={(e) => form.setValue("textBox.override", e)}
+              />
+            )}
             <RadioGroup
               defaultValue="photoOptional"
               className="flex items-center gap-2"
@@ -142,95 +193,47 @@ export const TextboxEdit: React.FC<DesignQuestionComponentProps> = ({
           </div>
 
           <div className="grid lg:grid-cols-4  gap-2">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} value={field?.value ?? ""} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="textBox.type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>TextBox Type</FormLabel>
-                  <FormControl>
-                    {createTypeSelector()}
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="textBox.label"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Label</FormLabel>
-                  <FormControl>
-                    <Input {...field} value={field?.value ?? ""} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="textBox.msg"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Message</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
+            {/* Example of usage with full typesafety */}
+            <FormFieldGroup label="Name" name="name" form={form} />
+            <FormItem>
+              <FormLabel>TextBox Type</FormLabel>
+              <FormControl>{createTypeSelector()}</FormControl>
+            </FormItem>
+            <FormFieldGroup label="Label" name="textBox.label" form={form} />
+            <FormFieldGroup label="Message" name="textBox.msg" form={form} />
+            <FormFieldGroup
+              label="Default Value"
               name="textBox.answer"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Default Value</FormLabel>
-                  <FormControl>
-                    <Input {...field} value={field?.value ?? ""} />
-                  </FormControl>
-                </FormItem>
-              )}
+              form={form}
             />
-            <FormField
-              control={form.control}
+            <FormFieldGroup
+              label="Variable"
               name="textBox.variableName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Variable</FormLabel>
-                  <FormControl>
-                    <Input {...field} value={field?.value ?? ""} />
-                  </FormControl>
-                </FormItem>
-              )}
+              form={form}
             />
-            <FormField
-              control={form.control}
+            <FormFieldGroup
+              label="Weight"
               name="weight"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Weight</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} value={field?.value ?? ""} />
-                  </FormControl>
-                </FormItem>
-              )}
+              form={form}
+              type="number"
             />
-
+            {isOverrided && (
+              <>
+                <FormFieldGroup
+                  label="Override Value"
+                  name="textBox.overrideAnswer"
+                  form={form}
+                />
+                <FormFieldGroup
+                  label="Override Reason"
+                  name="textBox.overrideReason"
+                  form={form}
+                />
+              </>
+            )}
             <FormField
               control={form.control}
-              name="name"
+              name="description"
               render={({ field }) => (
                 <FormItem className="col-span-full w-full lg:w-1/2">
                   <FormLabel>Description</FormLabel>
@@ -242,9 +245,14 @@ export const TextboxEdit: React.FC<DesignQuestionComponentProps> = ({
             />
           </div>
         </div>
-
         <div className="flex justify-end gap-2">
-          <Button disabled={isPending} onClick={resetValue} type="button" variant={"secondary"} size={"sm"}>
+          <Button
+            disabled={isPending}
+            onClick={resetValue}
+            type="button"
+            variant={"secondary"}
+            size={"sm"}
+          >
             <Undo2 /> Reset Changes
           </Button>
           <Button disabled={isPending} type="submit" size={"sm"}>

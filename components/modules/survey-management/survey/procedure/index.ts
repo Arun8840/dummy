@@ -7,7 +7,9 @@ import { createSurveySchema } from "../schema"
 import {
   QuestionTypes,
   SurveyResponse,
+  SurveySettingsResponse,
   SurveyType,
+  Textbox,
 } from "@/types/survey-management/survey-types"
 import { DragComponentTypes, TextboxTypes } from "@/types"
 
@@ -45,6 +47,28 @@ export const surveyRouter = createTRPCRouter({
       return await clientTrpcApi<SurveyType>(ctx, {
         endpoint: `load-template/${templateId}`,
         tenant: "survey/management",
+        method: "GET",
+      })
+    }),
+  getTemplateSettings: protectedProcedure
+    .input(
+      z.object({
+        templateId: z.string().min(1),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+
+      const { templateId } = input
+
+      return await clientTrpcApi<SurveySettingsResponse>(ctx, {
+        endpoint: `load-template/${templateId}`,
+        tenant: "survey/management/settings",
         method: "GET",
       })
     }),
@@ -144,7 +168,6 @@ export const surveyRouter = createTRPCRouter({
     }
   }),
 
-
   addQuestion: protectedProcedure
     .input(z.any())
     .mutation(async ({ ctx, input }) => {
@@ -159,7 +182,7 @@ export const surveyRouter = createTRPCRouter({
         endpoint: "create-component",
         tenant: "survey/management",
         method: "POST",
-        data: { ...request }
+        data: { ...request },
       })
 
       return {
@@ -182,7 +205,7 @@ export const surveyRouter = createTRPCRouter({
         endpoint: "remove-component",
         tenant: "survey/management",
         method: "POST",
-        data: { ...request }
+        data: { ...request },
       })
 
       return {
@@ -192,20 +215,41 @@ export const surveyRouter = createTRPCRouter({
       }
     }),
 
-  copyQuestion: protectedProcedure
+  copyQuestion: protectedProcedure.input(z.any()).mutation(async ({ ctx }) => {
+    if (!ctx.access_token) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "User is not authenticated.",
+      })
+    }
+
+    const res = await clientTrpcApi(ctx, {
+      endpoint: "copy-component",
+      tenant: "survey/management",
+      method: "POST",
+    })
+
+    return {
+      status: res?.status,
+      data: res?.data,
+      message: res?.message,
+    }
+  }),
+  moveQuestion: protectedProcedure
     .input(z.any())
-    .mutation(async ({ ctx }) => {
+    .mutation(async ({ ctx, input }) => {
       if (!ctx.access_token) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "User is not authenticated.",
         })
       }
-
-      const res = await clientTrpcApi(ctx, {
-        endpoint: "copy-component",
+      const request = input
+      const res = await clientTrpcApi<SurveyType>(ctx, {
+        endpoint: "move-component",
         tenant: "survey/management",
         method: "POST",
+        data: { ...request },
       })
 
       return {
@@ -214,7 +258,6 @@ export const surveyRouter = createTRPCRouter({
         message: res?.message,
       }
     }),
-
   saveQuestion: protectedProcedure
     .input(z.any())
     .mutation(async ({ ctx, input }) => {
@@ -225,12 +268,11 @@ export const surveyRouter = createTRPCRouter({
         })
       }
 
-
       const res = await clientTrpcApi(ctx, {
         endpoint: "save-component",
         tenant: "survey/management",
         method: "POST",
-        data: { ...input }
+        data: { ...input },
       })
 
       return {
@@ -239,7 +281,6 @@ export const surveyRouter = createTRPCRouter({
         message: res?.message,
       }
     }),
-
 
   // * common service calls for question properties
   getTextboxTypes: protectedProcedure.query(async ({ ctx }) => {
@@ -256,4 +297,38 @@ export const surveyRouter = createTRPCRouter({
       method: "GET",
     })
   }),
+
+  getNewTextBox: protectedProcedure
+    .input(
+      z.object({
+        length: z.number().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+      const { length } = input
+      if (!length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Missing or invalid length property.",
+        })
+      }
+
+      const res = await clientTrpcApi<Textbox>(ctx, {
+        endpoint: `get-textbox/${length}`,
+        tenant: "survey/management",
+        method: "GET",
+      })
+
+      return {
+        status: res?.status,
+        data: res?.data,
+        message: res?.message,
+      }
+    }),
 })
