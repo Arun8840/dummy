@@ -146,6 +146,31 @@ export const surveyRouter = createTRPCRouter({
       })
     }),
 
+  saveTemplateSettings: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+      const { id } = input
+      if (!id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Survey templateId is required.",
+        })
+      }
+
+      return await clientTrpcApi<SurveySettingsResponse>(ctx, {
+        endpoint: `save-template`,
+        tenant: "survey/management/settings",
+        method: "POST",
+        data: { ...input },
+      })
+    }),
+
   // * DESIGN RELATED PROCEDURES
   questions: protectedProcedure.query(async ({ ctx }) => {
     if (!ctx.access_token) {
