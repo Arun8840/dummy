@@ -24,6 +24,12 @@ export const Survey = () => {
         <GeneralSettings />
       </CustomCard>
       <CustomCard
+        title="Advanced Question Options"
+        description="Fine-tune advanced settings and behaviors for survey questions."
+      >
+        <AdvancedQuestionSettings />
+      </CustomCard>
+      <CustomCard
         title="Categories"
         description="Manage and organize categories within your survey."
       >
@@ -42,11 +48,18 @@ export const Survey = () => {
         <SurveyLogicSettings />
       </CustomCard>
       <CustomCard
+        title="Publishing"
+        description="Configure advanced publishing controls and access restrictions."
+      >
+        <AdvancedPublishSettings />
+      </CustomCard>
+      <CustomCard
         title="PDF Report"
         description="Customize the look and content of generated PDF reports."
       >
         <PdfReportSettings />
       </CustomCard>
+
       <CustomCard
         title="PDF Export"
         description="Set options for exporting survey data to PDF files."
@@ -65,19 +78,6 @@ export const Survey = () => {
         description="Manage language options and add survey translations."
       >
         <TranslationSettings />
-      </CustomCard>
-      <CustomCard
-        title="Publishing"
-        description="Configure advanced publishing controls and access restrictions."
-      >
-        <AdvancedPublishSettings />
-      </CustomCard>
-
-      <CustomCard
-        title="Advanced Question Options"
-        description="Fine-tune advanced settings and behaviors for survey questions."
-      >
-        <AdvancedQuestionSettings />
       </CustomCard>
     </div>
   )
