@@ -5,11 +5,13 @@ import { TRPCError } from "@trpc/server"
 import z from "zod"
 import { createSurveySchema } from "../schema"
 import {
+  SurveyPublisherTemplateType,
   QuestionTypes,
   SurveyResponse,
   SurveySettingsResponse,
   SurveyType,
   Textbox,
+  PublisherComponentType,
 } from "@/types/survey-management/survey-types"
 import { DragComponentTypes, TextboxTypes } from "@/types"
 
@@ -81,12 +83,13 @@ export const surveyRouter = createTRPCRouter({
       })
     }
 
-    return await clientTrpcApi<TableTemplateResponse>(ctx, {
+    return await clientTrpcApi<DragComponentTypes[]>(ctx, {
       endpoint: "load-survey-component-groups",
       tenant: "survey/management",
       method: "GET",
     })
   }),
+
 
   // * CRUD SERVICES
   create: protectedProcedure
@@ -356,4 +359,94 @@ export const surveyRouter = createTRPCRouter({
         message: res?.message,
       }
     }),
+
+
+
+  // * FOR PUBLISHER
+  getPublishTemplate: protectedProcedure
+    .input(
+      z.object({
+        templateId: z.string().min(1),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+
+      const { templateId } = input
+
+      return await clientTrpcApi<SurveyPublisherTemplateType>(ctx, {
+        endpoint: `load-template/${templateId}`,
+        tenant: "survey/management/publisher",
+        method: "GET",
+      })
+    }),
+  getPublishComponents: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.access_token) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "User is not authenticated.",
+      })
+    }
+
+    return await clientTrpcApi<DragComponentTypes[]>(ctx, {
+      endpoint: "load-survey-publisher-components",
+      tenant: "survey/management/publisher",
+      method: "GET",
+    })
+  }),
+
+
+  addPublihser: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+      const request = input
+      const res = await clientTrpcApi<PublisherComponentType>(ctx, {
+        endpoint: "create-publisher",
+        tenant: "survey/management/publisher",
+        method: "POST",
+        data: { ...request },
+      })
+
+      return {
+        status: res?.status,
+        data: res?.data,
+        message: res?.message,
+      }
+    }),
+  removePublisher: protectedProcedure
+    .input(z.any())
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.access_token) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "User is not authenticated.",
+        })
+      }
+      const request = input
+      const res = await clientTrpcApi<SurveyType>(ctx, {
+        endpoint: "remove-publisher",
+        tenant: "survey/management/publisher",
+        method: "POST",
+        data: { ...request },
+      })
+
+      return {
+        status: res?.status,
+        data: res?.data,
+        message: res?.message,
+      }
+    }),
+
+
 })

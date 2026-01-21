@@ -181,11 +181,3 @@ export function Design({ template }: DesignComponentProps) {
   )
 }
 
-// const Proccessing = () => {
-//   return <section className="w-full h-screen grid place-items-center bg-secondary/10 rounded-lg fixed z-10 inset-0">
-//     <Badge className="flex items-center px-4 py-2">
-//       <Spinner className="mr-2 text-muted" />
-//       <span>Creating . . .</span>
-//     </Badge>
-//   </section>
-// }

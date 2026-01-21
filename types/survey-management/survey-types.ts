@@ -367,3 +367,176 @@ export interface SurveySettingsTypes {
 }
 
 export type SurveySettingsResponse = SurveySettingsTypes
+
+
+// * PUBLIHSERS
+
+export interface FilterColumnType {
+  id: string;
+  containerId: string;
+  name: string;
+  displayName: string;
+  iName: string;
+  index: number;
+  componentType: string;
+  subComponentType: string;
+  type: string;
+  path: string;
+  valuePath: string;
+  valueString: string | null;
+  valueDouble: number;
+  valueBoolean: boolean;
+  valueDate: string | null;
+  valueInteger: number;
+  vaults: any | null;
+  hidden: boolean;
+  createIndex: boolean;
+  searchable: boolean;
+  showInReports: boolean;
+  showInInstance: boolean;
+  mapColumn: boolean;
+  lookup: any | null;
+}
+
+export interface FilterType {
+  column: FilterColumnType;
+  values: string[];
+  dataValues: string[];
+}
+
+export interface AssociateTables {
+  aaTableId: string;
+  containerId: string;
+  table: {
+    id: string;
+    templateId: string;
+    name: string;
+    type: string;
+    emailColumns: string[];
+    keywords: string[];
+  };
+  tableName: string;
+  primaryColumn: string;
+  primaryColumnValue: string | null;
+  primaryColumnLabel: string;
+  password: string | null;
+  userPassword: string | null;
+  passwordLabel: string;
+  submitButtonLabel: string | null;
+  emailColumn: string | null;
+  filters: FilterType[];
+}
+
+export interface PublisherComponentType {
+  id: string
+  containerId: string
+  componentType: string
+  subComponentType: string
+  name: string
+  status: boolean
+  undeployExistingSurveys: boolean
+  url: string | null
+  encodedUrl: string | null
+  multipleResponse: boolean
+  editReponse: boolean
+  showResults: boolean
+  displayOption: number
+  embedCode: string | null
+  iframeCode: string | null
+  displayWidth: string | null
+  displayHeight: string | null
+  subject: string | null
+  emailContent: string | null
+  sendInviteToAnonymousUser: boolean
+  customEmail: boolean
+  externalContacts: boolean
+  contactTableId: string | null
+  contactTable: any | null
+  sender: string | null
+  passwordProtect: boolean
+  passwordRequired: boolean
+  password: string | null
+  userPassword: string | null
+  passwordLabel: string | null
+  submitButtonLabel: string | null
+  qrGridfsId: string | null
+  qrCodefileName: string | null
+  associateTable: boolean
+  contacts: any | null
+  associatedTables: AssociateTables[]
+  roleMap: any | null
+  cronString: string | null
+  massDeploy: boolean
+  undeployURLAfterSurveyComplete: boolean
+  overrideWorkflow: boolean
+  workflowId: string | null
+  filenamePattern: string | null
+  filenamePatternKeywordMap: any | null
+  ftpSettings: {
+    id: string | null
+    name: string | null
+    containerId: string | null
+    fileType: string | null
+    ftpHost: string | null
+    ftpPort: number
+    ftpUser: string | null
+    ftpPassword: string | null
+    ftpDirectory: string | null
+    ftpFileName: string | null
+    ftpSshKey: string | null
+    sshKey: boolean
+    passPhrase: string | null
+    cronString: string | null
+    cronHelp: string | null
+    delimiter: string | null
+    delimiters: string | null
+  }
+  postalAddress: string | null
+  postalAddressKeywordMap: any | null
+  postalSurveyReport: boolean
+  postalVaultId: string | null
+  ftpTemplateId: string | null
+  ftpTemplateName: string | null
+  scheduleLater: boolean
+  scheduleDate: string | null
+  scheduledTimezone: string | null
+  hour: string | null
+  minute: string | null
+  ampm: string | null
+  recurring: boolean
+  recurringTypes: string[]
+  recurringType: string | null
+  recurringIntervel: number
+  numberOfRecurring: number
+  enableMessage: boolean
+  messages: any[]
+  messagePermissionMap: { [key: string]: any }
+  overrideTheme: boolean
+  themetemplateId: string | null
+  defaultLanguage: {
+    key: string
+    value: string
+    trigger: string | null
+  }
+  allowedTranslations: any[]
+  allowRecordCreation: boolean
+}
+
+export interface SurveyPublisherTemplateType {
+  id: string
+  clientId: string
+  ouId: string
+  name: string
+  iName: string
+  description: string
+  status: string
+  createdUserId: string
+  createdDate: string
+  modifiedUserId: string
+  modifiedDate: string
+  createdBy: string | null
+  modifiedBy: string | null
+  createdDateString: string | null
+  modifiedDateString: string | null
+  publishers: PublisherComponentType[]
+}

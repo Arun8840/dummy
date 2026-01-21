@@ -1,4 +1,4 @@
-import { QuestionTypes } from "./survey-management/survey-types"
+import { PublisherComponentType, QuestionTypes } from "./survey-management/survey-types"
 
 export interface MenuType {
   id: string
@@ -103,4 +103,8 @@ export interface TextboxTypes {
 
 export interface DesignQuestionComponentProps {
   value: QuestionTypes
+}
+
+export interface DesignPublihserComponentProps {
+  value: PublisherComponentType
 }

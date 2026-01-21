@@ -56,7 +56,7 @@ export const CreateSurveyForm = () => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Table Name</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>

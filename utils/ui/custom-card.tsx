@@ -40,7 +40,7 @@ export const CustomCard: React.FC<CustomCardTypes> = ({
           )}
         </CardHeader>
       )}
-      <CardContent className="p-1.5 flex flex-col gap-1">
+      <CardContent className="p-1.5 flex-1 flex flex-col gap-1">
         {children}
       </CardContent>
     </Card>
