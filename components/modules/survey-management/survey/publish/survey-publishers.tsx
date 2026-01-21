@@ -7,6 +7,7 @@ import { CustomCard } from "@/utils/ui/custom-card"
 import { Button } from "@/components/ui/button"
 import { Send } from "lucide-react"
 import { MemoizedPublishers } from "./memoized-publishers"
+import { useConfirm } from "@/hooks/use-confirm"
 
 const acceptTypes = [
     "publishWeb",
@@ -19,7 +20,11 @@ const acceptTypes = [
 ]
 export const SurveyPublishers = () => {
     const template = useSurveyStore((state) => state?.surveyPublisherTemplate)
-
+    const [ConfirmationModal, confirmToPublish] = useConfirm(
+        `Publish Survey ${template?.name || ""}?`,
+        "Are you sure you want to publish this survey? Once published, it will be available to all selected publishers.",
+        "default"
+    )
     const publishers = template?.publishers || []
 
     const currentChildrenLength = template?.publishers?.length ?? 0
@@ -28,15 +33,22 @@ export const SurveyPublishers = () => {
         order: String(currentChildrenLength),
     }
 
+
+    const handlePublish = async () => {
+        const confirm = await confirmToPublish()
+        if (!confirm) return
+    }
+
     const PublihserActions = () => {
         return <div>
-            <Button type="button" size={"sm"}>
+            <Button onClick={handlePublish} type="button" size={"sm"}>
                 <Send /> Publish
             </Button>
         </div>
     }
     return (
         <>
+            <ConfirmationModal isPending={false} />
             <CustomCard
                 title={template?.name}
                 description="Survey publishers allow you to control who can receive, view, or publish survey results. Add or configure publishers below."
