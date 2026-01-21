@@ -5,6 +5,7 @@ import { DragComponentTypes } from "@/types"
 import {
   QuestionTypes,
   SaveQuestionRequestType,
+  SurveyPublisherTemplateType,
   SurveyType,
 } from "@/types/survey-management/survey-types"
 export const useSurveyStore = create<SurveyStateTypes>()(
@@ -13,6 +14,9 @@ export const useSurveyStore = create<SurveyStateTypes>()(
 
     setTemplate: (template: SurveyType) => {
       set({ surveyTemplate: template })
+    },
+    setPublisherTemplate: (template: SurveyPublisherTemplateType) => {
+      set({ surveyPublisherTemplate: template })
     },
 
     setDragItems: (dragItems: DragComponentTypes[]) => {
@@ -144,6 +148,30 @@ export const useSurveyStore = create<SurveyStateTypes>()(
     editQuestion: (question) => {
       set((state) => {
         state.editableQuestion = question
+      })
+    },
+
+    // * FOR PUBLISHERS
+
+    addPublisher: (response) => {
+      set((state) => {
+        const template = state?.surveyPublisherTemplate
+        if (!template) return
+        if (!Array.isArray(template?.publishers)) return
+
+        template?.publishers?.push(response)
+      })
+    },
+    removePublisher: (publihserId) => {
+      set((state) => {
+        const template = state?.surveyPublisherTemplate
+        if (!template) return
+        if (!Array.isArray(template?.publishers)) return
+
+        // Remove publisher using filter
+        template.publishers = template.publishers.filter(
+          (publisher) => publisher.id !== publihserId
+        )
       })
     },
   }))

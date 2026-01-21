@@ -57,7 +57,7 @@ export const useConfirm = (
   const ConfirmationDialog = ({ isPending }: PopupPropType) => {
     return (
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="font-sans">
           <AlertDialogHeader>
             <AlertDialogTitle>{title}</AlertDialogTitle>
             <AlertDialogDescription>{message}</AlertDialogDescription>

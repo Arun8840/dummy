@@ -19,7 +19,7 @@ interface ModalComponentProps {
   className?: string
 }
 
-const baseClass = "max-h-[600px] flex-1 flex flex-col gap-2  overflow-y-auto"
+const baseClass = "max-h-full flex-1 flex flex-col gap-2  overflow-y-auto"
 export const ModalDrawer = ({
   children,
   open,
@@ -33,7 +33,7 @@ export const ModalDrawer = ({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent side={direction}>
+      <SheetContent side={direction} className="font-sans">
         <SheetHeader className="pb-0">
           <SheetTitle className="capitalize">{title}</SheetTitle>
           <SheetDescription>

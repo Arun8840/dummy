@@ -11,11 +11,13 @@ import { clientPlanRouter } from "@/components/modules/client-management/client-
 import { globalRouters } from "@/components/common-procedure"
 import { menuRouter } from "@/components/modules/survey-management/menus/procedure"
 import { variableRouter } from "@/components/modules/survey-management/variables/procedure"
+import { dashboardProcedureRouter } from "@/components/modules/survey-management/dashboard/procedure"
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
   global: globalRouters,
   dashboard: dashboardRouter,
+  mainDashboard: dashboardProcedureRouter,
   workflow: workflowRouter,
   table: tableRouter,
   survey: surveyRouter,
